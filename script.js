@@ -39,6 +39,72 @@ document.addEventListener("DOMContentLoaded", () => {
     target.scrollIntoView({ behavior: "smooth" });
   }
 
+  // SHARED SLIDESHOW LOGIC: Handles auto-rotation, arrow controls, and dot controls for the Escalade and Tesla galleries.
+  function initializeSlideshows() {
+    const slideshows = document.querySelectorAll("[data-slideshow]");
+
+    slideshows.forEach((slideshow) => {
+      const slides = Array.from(slideshow.querySelectorAll(".slideshow-image"));
+      const dots = Array.from(slideshow.querySelectorAll("[data-slideshow-dot]"));
+      const previousButton = slideshow.querySelector("[data-slideshow-prev]");
+      const nextButton = slideshow.querySelector("[data-slideshow-next]");
+      const intervalMs = Number(slideshow.dataset.interval) || 2800;
+      let rotationId = null;
+
+      if (slides.length <= 1) {
+        return;
+      }
+
+      let activeIndex = 0;
+
+      function updateActiveStates(nextIndex) {
+        activeIndex = (nextIndex + slides.length) % slides.length;
+
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("is-active", slideIndex === activeIndex);
+        });
+
+        dots.forEach((dot, dotIndex) => {
+          const isActive = dotIndex === activeIndex;
+          dot.classList.toggle("is-active", isActive);
+          dot.setAttribute("aria-pressed", String(isActive));
+        });
+      }
+
+      function startRotation() {
+        if (rotationId) {
+          window.clearInterval(rotationId);
+        }
+
+        rotationId = window.setInterval(() => {
+          updateActiveStates(activeIndex + 1);
+        }, intervalMs);
+      }
+
+      function handleManualNavigation(nextIndex) {
+        updateActiveStates(nextIndex);
+        startRotation();
+      }
+
+      previousButton?.addEventListener("click", () => {
+        handleManualNavigation(activeIndex - 1);
+      });
+
+      nextButton?.addEventListener("click", () => {
+        handleManualNavigation(activeIndex + 1);
+      });
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          handleManualNavigation(Number(dot.dataset.slideshowDot));
+        });
+      });
+
+      updateActiveStates(0);
+      startRotation();
+    });
+  }
+
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -61,6 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     fadeInElements.forEach((element) => element.classList.add("visible"));
   }
+
+  initializeSlideshows();
 
   scrollButtons.forEach((button) => {
     button.addEventListener("click", () => {

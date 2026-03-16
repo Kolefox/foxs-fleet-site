@@ -52,28 +52,12 @@
     <div class="why-grid">
       <div class="why-card fade-in">
         <div class="why-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-car-icon lucide-car" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
         </div>
-        <h3>Fully Insured</h3>
+        <h3>Luxury Experience</h3>
         <p>
-          Every vehicle in our fleet carries comprehensive coverage. Drive with complete confidence, knowing you are protected from the
-          moment you take the wheel.
-        </p>
-      </div>
-
-      <div class="why-card fade-in">
-        <div class="why-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-        </div>
-        <h3>Same-Day Delivery</h3>
-        <p>
-          Your schedule doesn't wait &mdash; neither do we. Confirm your reservation and we'll deliver your vehicle directly to your home,
-          hotel, or office, same day.
+          Every vehicle in our fleet is curated for comfort, style, and premium quality. Drive with confidence, knowing every detail is
+          designed to elevate your experience.
         </p>
       </div>
 
@@ -81,14 +65,30 @@
         <div class="why-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
-              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.6a16 16 0 0 0 6 6l.96-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+              d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"
+              fill="currentColor"
+              stroke="none"
             />
           </svg>
         </div>
-        <h3>24 / 7 Support</h3>
+        <h3>Airport Delivery</h3>
         <p>
-          A real person is always available. Whether it's a question before your trip or support during your rental, our team is on call
-          around the clock &mdash; no bots, no hold music.
+          Your travel plans don't wait &mdash; neither do we. Confirm your reservation and we'll have your vehicle ready at the airport
+          when you arrive.
+        </p>
+      </div>
+
+      <div class="why-card fade-in">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 22s7-3.5 7-9.3V5.7L12 3 5 5.7v7c0 5.8 7 9.3 7 9.3z" />
+            <path d="m9.2 12 1.8 1.8 3.8-4.1" />
+          </svg>
+        </div>
+        <h3>Safe &amp; Sanitized</h3>
+        <p>
+          Every vehicle is professionally cleaned and sanitized before delivery so your rental feels fresh, comfortable, and ready to
+          enjoy.
         </p>
       </div>
     </div>
@@ -103,16 +103,74 @@
     <div class="fleet-grid">
       <div class="vehicle-card fade-in">
         <div class="vehicle-img-wrap">
-          <!-- IMAGES: Replace the Escalade image file at assets/images/escalade-placeholder.svg. -->
-          <img src="assets/images/escalade-placeholder.svg" alt="2023 Cadillac Escalade Premium Luxury Platinum" loading="lazy" />
+          <!-- ESCALADE SLIDESHOW: Edit the 4 rotating Escalade images here if filenames ever change. -->
+          <div class="image-slideshow escalade-slideshow" data-slideshow="escalade" data-interval="2800" aria-label="2023 Cadillac Escalade photo slideshow">
+            <img
+              src="assets/images/escalade-1.jpg"
+              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 1"
+              class="slideshow-image is-active"
+              loading="eager"
+              fetchpriority="high"
+            />
+            <img
+              src="assets/images/escalade-2.jpg"
+              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 2"
+              class="slideshow-image"
+              loading="lazy"
+            />
+            <img
+              src="assets/images/escalade-3.jpg"
+              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 3"
+              class="slideshow-image"
+              loading="lazy"
+            />
+            <img
+              src="assets/images/escalade-4.jpg"
+              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 4"
+              class="slideshow-image"
+              loading="lazy"
+            />
+
+            <!-- ESCALADE SLIDESHOW ARROWS: Previous/next controls for the main card. -->
+            <div class="slideshow-controls" aria-hidden="false">
+              <button
+                type="button"
+                class="slideshow-arrow slideshow-arrow-prev"
+                data-slideshow-prev
+                aria-label="Previous Escalade photo"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14.5 5.5 8 12l6.5 6.5" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="slideshow-arrow slideshow-arrow-next"
+                data-slideshow-next
+                aria-label="Next Escalade photo"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9.5 5.5 16 12l-6.5 6.5" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- ESCALADE SLIDESHOW DOTS: Direct navigation for the 4 Escalade photos. -->
+            <div class="slideshow-dots" aria-label="Escalade card photo navigation">
+              <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Escalade photo 1" aria-pressed="true"></button>
+              <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Escalade photo 2" aria-pressed="false"></button>
+              <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Escalade photo 3" aria-pressed="false"></button>
+              <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Escalade photo 4" aria-pressed="false"></button>
+            </div>
+          </div>
           <div class="vehicle-price-badge">
             <span class="from">From</span>
-            <span class="price">$160</span>
+            <span class="price">$200</span>
             <span class="per-day">/ day</span>
           </div>
         </div>
         <div class="vehicle-body">
-          <h3 class="vehicle-name">2023 Cadillac Escalade<br />Premium Luxury Platinum</h3>
+          <h3 class="vehicle-name vehicle-name-escalade">2023 Cadillac Escalade<br />Premium Luxury Platinum</h3>
           <p class="vehicle-desc">
             The pinnacle of American luxury. Commanding presence, immaculate interior, and the presence that makes every arrival
             unforgettable.
@@ -131,16 +189,73 @@
 
       <div class="vehicle-card fade-in">
         <div class="vehicle-img-wrap">
-          <!-- IMAGES: Replace the Tesla image file at assets/images/tesla-placeholder.svg. -->
-          <img src="assets/images/tesla-placeholder.svg" alt="2023 Tesla Model 3" loading="lazy" />
+          <!-- TESLA SLIDESHOW CONTAINER: Edit the 4 rotating Tesla images here if filenames ever change. -->
+          <div class="image-slideshow tesla-slideshow" data-slideshow="tesla" data-interval="2800" aria-label="2023 Tesla Model 3 photo slideshow">
+            <img
+              src="assets/images/Tesla-1.jpg"
+              alt="2023 Tesla Model 3 photo 1"
+              class="slideshow-image is-active"
+              loading="lazy"
+            />
+            <img
+              src="assets/images/Tesla-2.jpg"
+              alt="2023 Tesla Model 3 photo 2"
+              class="slideshow-image"
+              loading="lazy"
+            />
+            <img
+              src="assets/images/Tesla-3.jpg"
+              alt="2023 Tesla Model 3 photo 3"
+              class="slideshow-image"
+              loading="lazy"
+            />
+            <img
+              src="assets/images/Tesla-4.jpg"
+              alt="2023 Tesla Model 3 photo 4"
+              class="slideshow-image"
+              loading="lazy"
+            />
+
+            <!-- TESLA ARROW CONTROLS: Previous/next controls for the main Tesla card. -->
+            <div class="slideshow-controls" aria-hidden="false">
+              <button
+                type="button"
+                class="slideshow-arrow slideshow-arrow-prev"
+                data-slideshow-prev
+                aria-label="Previous Tesla photo"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14.5 5.5 8 12l6.5 6.5" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="slideshow-arrow slideshow-arrow-next"
+                data-slideshow-next
+                aria-label="Next Tesla photo"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9.5 5.5 16 12l-6.5 6.5" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- TESLA DOT CONTROLS: Direct navigation for the 4 Tesla photos. -->
+            <div class="slideshow-dots" aria-label="Tesla card photo navigation">
+              <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Tesla photo 1" aria-pressed="true"></button>
+              <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Tesla photo 2" aria-pressed="false"></button>
+              <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Tesla photo 3" aria-pressed="false"></button>
+              <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Tesla photo 4" aria-pressed="false"></button>
+            </div>
+          </div>
           <div class="vehicle-price-badge">
             <span class="from">From</span>
-            <span class="price">$160</span>
+            <span class="price">$70</span>
             <span class="per-day">/ day</span>
           </div>
         </div>
         <div class="vehicle-body">
-          <h3 class="vehicle-name">2023 Tesla<br />Model 3</h3>
+          <h3 class="vehicle-name vehicle-name-tesla">2023 Tesla Model 3</h3>
           <p class="vehicle-desc">
             Silent, effortless, and distinctly modern. A fully electric luxury sedan with a premium white interior built for the refined
             driver.
@@ -174,77 +289,77 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
         </div>
         <p class="testimonial-text">
-          "The Escalade was spotless, delivered on time, and looked absolutely incredible pulling up to our event. Fox's Fleet made us
-          feel like VIPs."
-        </p>
-        <div class="testimonial-author">
-          <div class="author-avatar">M</div>
-          <div>
-            <div class="author-name">Marcus T.</div>
-            <div class="author-role">Corporate Event Host</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card fade-in">
-        <div class="stars">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-        </div>
-        <p class="testimonial-text">
-          "Booked the Tesla for a weekend in Miami and honestly it changed how I experience the city. Seamless booking, zero issues, and
-          the car was immaculate."
-        </p>
-        <div class="testimonial-author">
-          <div class="author-avatar">J</div>
-          <div>
-            <div class="author-name">Jasmine R.</div>
-            <div class="author-role">Weekend Traveler</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card fade-in">
-        <div class="stars">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-        </div>
-        <p class="testimonial-text">
-          "I travel to South Florida often for business and Fox's Fleet is the only rental I trust. Same-day delivery to my hotel, every
-          single time. No surprises."
-        </p>
-        <div class="testimonial-author">
-          <div class="author-avatar">D</div>
-          <div>
-            <div class="author-name">David K.</div>
-            <div class="author-role">Business Traveler</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card fade-in">
-        <div class="stars">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-        </div>
-        <p class="testimonial-text">
-          "Rented the Escalade for my anniversary and it was absolutely perfect. The whole process from booking to drop-off was smooth and
-          professional. Highly recommend."
+          "Kerri was a great host! The truck was clean and no issues. She met us at the airport and was easy to access."
         </p>
         <div class="testimonial-author">
           <div class="author-avatar">A</div>
           <div>
-            <div class="author-name">Andre &amp; Leila M.</div>
-            <div class="author-role">Anniversary Weekend</div>
+            <div class="author-name">Amber</div>
+            <div class="author-role">Escalade Guest</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <div class="stars">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+        </div>
+        <p class="testimonial-text">
+          "Very nice car. Clean and everything works. Kerry was very nice and accommodating. Responded to all text. I will use her car
+          again for sure!!!"
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">E</div>
+          <div>
+            <div class="author-name">Ehsan</div>
+            <div class="author-role">Escalade Guest</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <div class="stars">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+        </div>
+        <p class="testimonial-text">
+          "Amazing Experience from Start to Finish!
+          <br /><br />
+          This was by far one of the best vehicle rental experiences I’ve ever had! The pick-up location was incredibly convenient, easy
+          to find, safe, and made the whole process smooth and stress-free."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">C</div>
+          <div>
+            <div class="author-name">Courtney</div>
+            <div class="author-role">Escalade Guest</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <div class="stars">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+        </div>
+        <p class="testimonial-text">
+          "Kerri is an amazing host. The truck is clean and extremely well kept! Already booked another trip with her."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">E</div>
+          <div>
+            <div class="author-name">Ernest</div>
+            <div class="author-role">Repeat Escalade Guest</div>
           </div>
         </div>
       </div>
@@ -331,7 +446,65 @@
   <div class="modal-backdrop" id="modal-escalade" data-modal-id="escalade">
     <div class="modal">
       <div class="modal-img-wrap">
-        <img src="assets/images/escalade-placeholder.svg" alt="2023 Cadillac Escalade" class="modal-img" />
+        <!-- ESCALADE SLIDESHOW: This modal reuses the same 4-photo Escalade rotation. -->
+        <div class="image-slideshow escalade-slideshow modal-slideshow" data-slideshow="escalade" data-interval="2800" aria-label="2023 Cadillac Escalade detail photo slideshow">
+          <img
+            src="assets/images/escalade-1.jpg"
+            alt="2023 Cadillac Escalade detail photo 1"
+            class="slideshow-image modal-img is-active"
+            loading="eager"
+          />
+          <img
+            src="assets/images/escalade-2.jpg"
+            alt="2023 Cadillac Escalade detail photo 2"
+            class="slideshow-image modal-img"
+            loading="lazy"
+          />
+          <img
+            src="assets/images/escalade-3.jpg"
+            alt="2023 Cadillac Escalade detail photo 3"
+            class="slideshow-image modal-img"
+            loading="lazy"
+          />
+          <img
+            src="assets/images/escalade-4.jpg"
+            alt="2023 Cadillac Escalade detail photo 4"
+            class="slideshow-image modal-img"
+            loading="lazy"
+          />
+
+          <!-- ESCALADE SLIDESHOW ARROWS: Previous/next controls for the Escalade modal. -->
+          <div class="slideshow-controls" aria-hidden="false">
+            <button
+              type="button"
+              class="slideshow-arrow slideshow-arrow-prev"
+              data-slideshow-prev
+              aria-label="Previous Escalade detail photo"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="slideshow-arrow slideshow-arrow-next"
+              data-slideshow-next
+              aria-label="Next Escalade detail photo"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9.5 5.5 16 12l-6.5 6.5" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- ESCALADE SLIDESHOW DOTS: Direct navigation for the 4 modal photos. -->
+          <div class="slideshow-dots" aria-label="Escalade modal photo navigation">
+            <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Escalade detail photo 1" aria-pressed="true"></button>
+            <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Escalade detail photo 2" aria-pressed="false"></button>
+            <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Escalade detail photo 3" aria-pressed="false"></button>
+            <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Escalade detail photo 4" aria-pressed="false"></button>
+          </div>
+        </div>
         <button class="modal-close" type="button" aria-label="Close Escalade details" data-modal-close="escalade">&#10005;</button>
       </div>
       <div class="modal-body">
@@ -387,7 +560,65 @@
   <div class="modal-backdrop" id="modal-tesla" data-modal-id="tesla">
     <div class="modal">
       <div class="modal-img-wrap">
-        <img src="assets/images/tesla-placeholder.svg" alt="2023 Tesla Model 3" class="modal-img" />
+        <!-- TESLA SLIDESHOW CONTAINER: This modal reuses the same 4-photo Tesla rotation. -->
+        <div class="image-slideshow tesla-slideshow modal-slideshow" data-slideshow="tesla" data-interval="2800" aria-label="2023 Tesla Model 3 detail photo slideshow">
+          <img
+            src="assets/images/Tesla-1.jpg"
+            alt="2023 Tesla Model 3 detail photo 1"
+            class="slideshow-image modal-img is-active"
+            loading="lazy"
+          />
+          <img
+            src="assets/images/Tesla-2.jpg"
+            alt="2023 Tesla Model 3 detail photo 2"
+            class="slideshow-image modal-img"
+            loading="lazy"
+          />
+          <img
+            src="assets/images/Tesla-3.jpg"
+            alt="2023 Tesla Model 3 detail photo 3"
+            class="slideshow-image modal-img"
+            loading="lazy"
+          />
+          <img
+            src="assets/images/Tesla-4.jpg"
+            alt="2023 Tesla Model 3 detail photo 4"
+            class="slideshow-image modal-img"
+            loading="lazy"
+          />
+
+          <!-- TESLA ARROW CONTROLS: Previous/next controls for the Tesla modal. -->
+          <div class="slideshow-controls" aria-hidden="false">
+            <button
+              type="button"
+              class="slideshow-arrow slideshow-arrow-prev"
+              data-slideshow-prev
+              aria-label="Previous Tesla detail photo"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="slideshow-arrow slideshow-arrow-next"
+              data-slideshow-next
+              aria-label="Next Tesla detail photo"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9.5 5.5 16 12l-6.5 6.5" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- TESLA DOT CONTROLS: Direct navigation for the 4 Tesla modal photos. -->
+          <div class="slideshow-dots" aria-label="Tesla modal photo navigation">
+            <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Tesla detail photo 1" aria-pressed="true"></button>
+            <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Tesla detail photo 2" aria-pressed="false"></button>
+            <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Tesla detail photo 3" aria-pressed="false"></button>
+            <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Tesla detail photo 4" aria-pressed="false"></button>
+          </div>
+        </div>
         <button class="modal-close" type="button" aria-label="Close Tesla details" data-modal-close="tesla">&#10005;</button>
       </div>
       <div class="modal-body">

@@ -281,7 +281,7 @@
  @media (min-width:768px){
  .why-grid{grid-template-columns:repeat(3,1fr);gap:24px;}
 }
- .why-card{
+.why-card{
  background:var(--card-bg);
  border:1px solid var(--card-border);
  border-radius:var(--radius);
@@ -293,7 +293,7 @@
  transform:translateY(-4px);
  border-color:rgba(201,168,76,0.4);
  box-shadow:0 18px 40px rgba(0,0,0,0.45);
-}
+ }
  .why-icon{
  width:42px;
  height:42px;
@@ -358,17 +358,121 @@
  height:260px;
  overflow:hidden;
  background:#0d0d0d;
-}
+ }
+ /* SHARED VEHICLE SLIDESHOW: Stacked-image slideshow styles used by the Escalade and Tesla card/modal galleries. */
+ .image-slideshow{
+ position:relative;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ }
+ .slideshow-image{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ object-position:center 38%;
+ opacity:0;
+ transition:opacity 0.9s ease,transform 0.6s ease;
+ will-change:opacity,transform;
+ }
+ .slideshow-image.is-active{
+ opacity:1;
+ }
+ /* SHARED SLIDESHOW ARROWS: Minimal luxury previous/next controls for both vehicles. */
+ .slideshow-controls{
+ position:absolute;
+ inset:0;
+ z-index:2;
+ pointer-events:none;
+ }
+ .slideshow-arrow{
+ position:absolute;
+ top:50%;
+ transform:translateY(-50%);
+ width:46px;
+ height:46px;
+ border:none;
+ background:linear-gradient(180deg,rgba(8,8,8,0.18) 0%,rgba(8,8,8,0.34) 100%);
+ color:rgba(201,168,76,0.92);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ pointer-events:auto;
+ transition:color 0.2s ease,background 0.2s ease,opacity 0.2s ease,transform 0.2s ease;
+ opacity:0.92;
+ -webkit-tap-highlight-color:transparent;
+ }
+ .slideshow-arrow:hover,
+ .slideshow-arrow:focus-visible{
+ color:var(--gold-light);
+ background:linear-gradient(180deg,rgba(8,8,8,0.26) 0%,rgba(8,8,8,0.44) 100%);
+ }
+ .slideshow-arrow:focus-visible{
+ outline:1px solid rgba(201,168,76,0.5);
+ outline-offset:2px;
+ }
+ .slideshow-arrow-prev{left:10px;}
+ .slideshow-arrow-next{right:10px;}
+ .slideshow-arrow svg{
+ width:18px;
+ height:18px;
+ stroke:currentColor;
+ fill:none;
+ stroke-width:1.6;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+ }
+ /* SHARED SLIDESHOW DOTS: Active/inactive luxury navigation states for both vehicles. */
+ .slideshow-dots{
+ position:absolute;
+ left:50%;
+ bottom:14px;
+ transform:translateX(-50%);
+ z-index:2;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ }
+ .slideshow-dot{
+ width:9px;
+ height:9px;
+ padding:0;
+ border:none;
+ border-radius:50%;
+ background:rgba(201,168,76,0.26);
+ box-shadow:0 0 0 1px rgba(255,255,255,0.08);
+ cursor:pointer;
+ transition:background 0.2s ease,transform 0.2s ease,box-shadow 0.2s ease;
+ -webkit-tap-highlight-color:transparent;
+ }
+ .slideshow-dot:hover,
+ .slideshow-dot:focus-visible{
+ background:rgba(226,194,120,0.62);
+ transform:scale(1.05);
+ }
+ .slideshow-dot:focus-visible{
+ outline:1px solid rgba(201,168,76,0.5);
+ outline-offset:3px;
+ }
+ .slideshow-dot.is-active{
+ background:var(--gold);
+ box-shadow:0 0 0 1px rgba(201,168,76,0.2),0 0 12px rgba(201,168,76,0.24);
+ transform:scale(1.08);
+ }
  .vehicle-img-wrap img{
  width:100%;
  height:100%;
  object-fit:cover;
  object-position:center 38%;
- transition:transform 0.6s ease;
-}
- .vehicle-card:hover .vehicle-img-wrap img{
+ transition:opacity 0.9s ease,transform 0.6s ease;
+ }
+ .vehicle-card:hover .vehicle-img-wrap img,
+ .vehicle-card:hover .vehicle-img-wrap .slideshow-image{
  transform:scale(1.04);
-}
+ }
  .vehicle-price-badge{
  position:absolute;
  top:16px;
@@ -405,7 +509,7 @@
  .vehicle-body{
  padding:26px 24px 28px;
 }
- .vehicle-name{
+.vehicle-name{
  font-family:var(--font-display);
  font-size:2rem;
  line-height:1.05;
@@ -413,7 +517,23 @@
  color:var(--white);
  margin-bottom:14px;
 }
- .vehicle-desc{
+/* VEHICLE TITLES: Small balance refinements for the fleet card headings. */
+.vehicle-name-tesla{
+ text-align:center;
+ margin-inline:auto;
+ max-width:13ch;
+ text-wrap:balance;
+}
+.vehicle-name-escalade{
+ letter-spacing:0.01em;
+}
+@media (min-width:768px){
+ .vehicle-name-tesla{
+ max-width:none;
+ white-space:nowrap;
+ }
+}
+.vehicle-desc{
  font-size:13px;
  color:var(--text-muted);
  line-height:1.8;
@@ -678,7 +798,10 @@
  height:240px;
  object-fit:cover;
  object-position:center 38%;
-}
+ }
+ .modal-slideshow{
+ height:240px;
+ }
  .modal-body{
  padding:28px 24px 32px;
 }
@@ -840,7 +963,20 @@
  .hero-scroll{bottom:20px;}
  .section{padding:78px 20px;}
  .vehicle-name{font-size:1.75rem;}
+ .vehicle-name-tesla{
+ max-width:12ch;
+ }
  .vehicle-img-wrap{height:230px;}
+ .slideshow-arrow{
+ width:44px;
+ height:44px;
+ }
+ .slideshow-arrow-prev{left:8px;}
+ .slideshow-arrow-next{right:8px;}
+ .slideshow-dots{
+ bottom:12px;
+ gap:7px;
+ }
  .modal-body{padding:24px 20px 28px;}
  .booking-form{padding:24px 16px 22px;}
  .whatsapp-btn{
