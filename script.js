@@ -7,7 +7,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const bookingForm = document.getElementById("booking-form");
   const vehicleSelect = document.getElementById("vehicle");
   const pickupInput = document.getElementById("pickup");
+  const pickupTimeInput = document.getElementById("pickup-time");
   const dropoffInput = document.getElementById("dropoff");
+  const dropoffTimeInput = document.getElementById("dropoff-time");
+  const smsConsentInput = document.getElementById("sms-consent");
+  const bookingNote = bookingForm?.querySelector(".booking-note") || null;
+
+  // BOOKING WEBHOOK URL: Update this if the GoHighLevel inbound webhook ever changes.
+  const bookingWebhookUrl =
+    "https://services.leadconnectorhq.com/hooks/VS0PZHPpr79qaZ00fQJo/webhook-trigger/2070309d-b0c7-48f5-8f8c-0550a333ab4a";
 
   function closeAllModals() {
     modalBackdrops.forEach((modal) => modal.classList.remove("open"));
@@ -105,6 +113,390 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // TESTIMONIAL CAROUSEL SETTINGS: Change autoplay speed, transition timing, and cards shown on desktop/tablet/mobile here.
+  const testimonialCarouselSettings = {
+    autoplaySpeed: 4000,
+    transitionDuration: 700,
+    swipeThreshold: 56,
+    cardsVisible: {
+      desktop: 3,
+      tablet: 2,
+      mobile: 1,
+    },
+    breakpoints: {
+      tablet: 768,
+      desktop: 1024,
+    },
+  };
+
+  function initializeTestimonialCarousels(settings) {
+    const carousels = document.querySelectorAll("[data-testimonial-carousel]");
+
+    carousels.forEach((carousel) => {
+      const viewport = carousel.querySelector("[data-testimonial-viewport]");
+      const track = carousel.querySelector("[data-testimonial-track]");
+      const dotsContainer = carousel.querySelector("[data-testimonial-dots]");
+      const originalSlides = Array.from(track?.querySelectorAll("[data-testimonial-slide]") || []);
+
+      if (!viewport || !track || !dotsContainer || originalSlides.length === 0) {
+        return;
+      }
+
+      const totalSlides = originalSlides.length;
+      const cloneBuffer = Math.min(
+        Math.max(settings.cardsVisible.desktop, settings.cardsVisible.tablet, settings.cardsVisible.mobile),
+        totalSlides,
+      );
+
+      let cardsVisible = settings.cardsVisible.mobile;
+      let currentIndex = cloneBuffer;
+      let slideWidth = 0;
+      let trackGap = 0;
+      let autoplayId = 0;
+      let resizeFrame = 0;
+      let isDragging = false;
+      let isHovered = false;
+      let isFocused = false;
+      let isTransitioning = false;
+      let dragStartX = 0;
+      let dragDeltaX = 0;
+      let activePointerId = null;
+
+      function createClone(slide) {
+        const clone = slide.cloneNode(true);
+        clone.dataset.testimonialClone = "true";
+        clone.removeAttribute("data-testimonial-slide");
+        clone.setAttribute("aria-hidden", "true");
+        return clone;
+      }
+
+      originalSlides
+        .slice(-cloneBuffer)
+        .reverse()
+        .forEach((slide) => {
+          track.insertBefore(createClone(slide), track.firstChild);
+        });
+
+      originalSlides.slice(0, cloneBuffer).forEach((slide) => {
+        track.appendChild(createClone(slide));
+      });
+
+      // TESTIMONIAL DOTS: Change dot count by adding or removing cards in index.html; dots are rebuilt automatically.
+      const dots = originalSlides.map((_, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "testimonial-dot";
+        dot.dataset.testimonialDot = String(index);
+        dot.setAttribute("aria-label", `View testimonial ${index + 1}`);
+        dot.setAttribute("aria-pressed", "false");
+        dotsContainer.appendChild(dot);
+        return dot;
+      });
+
+      function getCardsVisible() {
+        if (window.innerWidth >= settings.breakpoints.desktop) {
+          return settings.cardsVisible.desktop;
+        }
+
+        if (window.innerWidth >= settings.breakpoints.tablet) {
+          return settings.cardsVisible.tablet;
+        }
+
+        return settings.cardsVisible.mobile;
+      }
+
+      function getLogicalIndex(index = currentIndex) {
+        return ((index - cloneBuffer) % totalSlides + totalSlides) % totalSlides;
+      }
+
+      function getOffsetForIndex(index = currentIndex) {
+        return (slideWidth + trackGap) * index;
+      }
+
+      function setTrackTransition(isEnabled) {
+        track.style.transition = isEnabled
+          ? `transform ${settings.transitionDuration}ms cubic-bezier(0.22, 1, 0.36, 1)`
+          : "none";
+      }
+
+      function updateDots() {
+        const logicalIndex = getLogicalIndex();
+
+        dots.forEach((dot, index) => {
+          const isActive = index === logicalIndex;
+          dot.classList.toggle("is-active", isActive);
+          dot.setAttribute("aria-pressed", String(isActive));
+        });
+      }
+
+      function measure() {
+        carousel.style.setProperty("--testimonial-cards-visible", String(cardsVisible));
+
+        const firstSlide = track.querySelector(".testimonial-slide");
+
+        if (!firstSlide) {
+          return;
+        }
+
+        slideWidth = firstSlide.getBoundingClientRect().width;
+
+        const computedTrackStyles = window.getComputedStyle(track);
+        trackGap = parseFloat(computedTrackStyles.columnGap || computedTrackStyles.gap || "0");
+      }
+
+      function getMaxOriginalStartIndex() {
+        return cloneBuffer + totalSlides - cardsVisible;
+      }
+
+      function forceTrackReflow() {
+        void track.getBoundingClientRect();
+      }
+
+      function updatePosition({ animated = true } = {}) {
+        setTrackTransition(animated);
+        track.style.transform = `translate3d(${-getOffsetForIndex(currentIndex)}px, 0, 0)`;
+      }
+
+      function clearAutoplay() {
+        if (!autoplayId) {
+          return;
+        }
+
+        window.clearInterval(autoplayId);
+        autoplayId = 0;
+      }
+
+      function startAutoplay() {
+        clearAutoplay();
+
+        if (totalSlides <= cardsVisible || isHovered || isFocused) {
+          return;
+        }
+
+        autoplayId = window.setInterval(() => {
+          if (isDragging || isTransitioning) {
+            return;
+          }
+
+          stepCarousel(1, { restartAutoplay: false });
+        }, settings.autoplaySpeed);
+      }
+
+      function goToIndex(nextIndex, { animated = true, restartAutoplay = true } = {}) {
+        if (animated && isTransitioning) {
+          return;
+        }
+
+        currentIndex = nextIndex;
+        isTransitioning = animated;
+        updatePosition({ animated });
+        updateDots();
+
+        if (restartAutoplay) {
+          startAutoplay();
+        }
+      }
+
+      function normalizeIndex() {
+        if (currentIndex >= totalSlides + cloneBuffer) {
+          currentIndex -= totalSlides;
+          updatePosition({ animated: false });
+        } else if (currentIndex < cloneBuffer) {
+          currentIndex += totalSlides;
+          updatePosition({ animated: false });
+        }
+
+        isTransitioning = false;
+      }
+
+      function getClosestIndex(targetLogicalIndex) {
+        const baseIndex = cloneBuffer + targetLogicalIndex;
+        const candidates = [baseIndex, baseIndex - totalSlides, baseIndex + totalSlides];
+
+        return candidates.reduce((closestIndex, candidate) => {
+          return Math.abs(candidate - currentIndex) < Math.abs(closestIndex - currentIndex) ? candidate : closestIndex;
+        }, baseIndex);
+      }
+
+      function handleManualNavigation(nextIndex, animated = true) {
+        goToIndex(nextIndex, { animated, restartAutoplay: true });
+      }
+
+      function wrapToStart({ restartAutoplay = true } = {}) {
+        currentIndex = cloneBuffer - cardsVisible;
+        updatePosition({ animated: false });
+        forceTrackReflow();
+
+        currentIndex = cloneBuffer;
+        isTransitioning = true;
+        updatePosition({ animated: true });
+        updateDots();
+
+        if (restartAutoplay) {
+          startAutoplay();
+        }
+      }
+
+      function wrapToEnd({ restartAutoplay = true } = {}) {
+        currentIndex = cloneBuffer + totalSlides;
+        updatePosition({ animated: false });
+        forceTrackReflow();
+
+        currentIndex = getMaxOriginalStartIndex();
+        isTransitioning = true;
+        updatePosition({ animated: true });
+        updateDots();
+
+        if (restartAutoplay) {
+          startAutoplay();
+        }
+      }
+
+      function stepCarousel(direction, { restartAutoplay = true } = {}) {
+        if (direction > 0 && currentIndex >= getMaxOriginalStartIndex()) {
+          wrapToStart({ restartAutoplay });
+          return;
+        }
+
+        if (direction < 0 && currentIndex <= cloneBuffer) {
+          wrapToEnd({ restartAutoplay });
+          return;
+        }
+
+        goToIndex(currentIndex + direction, { animated: true, restartAutoplay });
+      }
+
+      function finishDrag(pointerId) {
+        if (!isDragging) {
+          return;
+        }
+
+        if (typeof pointerId === "number" && viewport.hasPointerCapture?.(pointerId)) {
+          viewport.releasePointerCapture(pointerId);
+        }
+
+        viewport.classList.remove("is-dragging");
+        isDragging = false;
+
+        const swipeThreshold = Math.max(settings.swipeThreshold, slideWidth * 0.12);
+
+        if (Math.abs(dragDeltaX) > swipeThreshold) {
+          stepCarousel(dragDeltaX < 0 ? 1 : -1, { restartAutoplay: true });
+        } else {
+          goToIndex(currentIndex, { animated: true, restartAutoplay: true });
+        }
+
+        dragDeltaX = 0;
+        activePointerId = null;
+      }
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          const targetIndex = Number(dot.dataset.testimonialDot);
+          const closestIndex = getClosestIndex(targetIndex);
+          const shouldAnimate = Math.abs(closestIndex - currentIndex) <= cardsVisible;
+          handleManualNavigation(closestIndex, shouldAnimate);
+        });
+      });
+
+      track.addEventListener("transitionend", (event) => {
+        if (event.target !== track || event.propertyName !== "transform") {
+          return;
+        }
+
+        normalizeIndex();
+      });
+
+      viewport.addEventListener("pointerdown", (event) => {
+        if ((event.pointerType === "mouse" && event.button !== 0) || isTransitioning) {
+          return;
+        }
+
+        if (event.pointerType === "mouse") {
+          event.preventDefault();
+        }
+
+        activePointerId = event.pointerId;
+        dragStartX = event.clientX;
+        dragDeltaX = 0;
+        isDragging = true;
+        viewport.classList.add("is-dragging");
+        clearAutoplay();
+        setTrackTransition(false);
+        viewport.setPointerCapture?.(event.pointerId);
+      });
+
+      viewport.addEventListener("pointermove", (event) => {
+        if (!isDragging || event.pointerId !== activePointerId) {
+          return;
+        }
+
+        dragDeltaX = event.clientX - dragStartX;
+        track.style.transform = `translate3d(${-getOffsetForIndex(currentIndex) + dragDeltaX}px, 0, 0)`;
+      });
+
+      viewport.addEventListener("pointerup", (event) => {
+        if (event.pointerId !== activePointerId) {
+          return;
+        }
+
+        finishDrag(event.pointerId);
+      });
+
+      viewport.addEventListener("pointercancel", (event) => {
+        if (event.pointerId !== activePointerId) {
+          return;
+        }
+
+        finishDrag(event.pointerId);
+      });
+
+      carousel.addEventListener("mouseenter", () => {
+        isHovered = true;
+        clearAutoplay();
+      });
+
+      carousel.addEventListener("mouseleave", () => {
+        isHovered = false;
+        startAutoplay();
+      });
+
+      carousel.addEventListener("focusin", () => {
+        isFocused = true;
+        clearAutoplay();
+      });
+
+      carousel.addEventListener("focusout", (event) => {
+        if (event.relatedTarget && carousel.contains(event.relatedTarget)) {
+          return;
+        }
+
+        isFocused = false;
+        startAutoplay();
+      });
+
+      window.addEventListener("resize", () => {
+        window.cancelAnimationFrame(resizeFrame);
+        resizeFrame = window.requestAnimationFrame(() => {
+          const activeLogicalIndex = getLogicalIndex();
+          cardsVisible = Math.min(getCardsVisible(), totalSlides);
+          measure();
+          currentIndex = Math.min(cloneBuffer + activeLogicalIndex, getMaxOriginalStartIndex());
+          updatePosition({ animated: false });
+          updateDots();
+          startAutoplay();
+        });
+      });
+
+      carousel.classList.add("is-ready");
+      cardsVisible = Math.min(getCardsVisible(), totalSlides);
+      measure();
+      updateDots();
+      updatePosition({ animated: false });
+      startAutoplay();
+    });
+  }
+
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -129,6 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   initializeSlideshows();
+  initializeTestimonialCarousels(testimonialCarouselSettings);
 
   scrollButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -170,31 +563,139 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // BOOKING FORM: Update submit messaging, validation rules, or connect this form to a backend here.
+  // BOOKING FORM: Update submit messaging, field mapping, or webhook behavior here.
   if (bookingForm) {
-    bookingForm.addEventListener("submit", (event) => {
-      event.preventDefault();
+    const submitButton = bookingForm.querySelector('button[type="submit"]');
+    const defaultButtonLabel = submitButton?.textContent || "Submit Reservation Request";
+    const defaultBookingNote = bookingNote?.textContent || "";
+    let bookingMessageTimeout = 0;
 
-      const submitButton = bookingForm.querySelector('button[type="submit"]');
+    bookingNote?.setAttribute("aria-live", "polite");
+    bookingNote?.setAttribute("role", "status");
+
+    function clearBookingMessageTimeout() {
+      if (!bookingMessageTimeout) {
+        return;
+      }
+
+      window.clearTimeout(bookingMessageTimeout);
+      bookingMessageTimeout = 0;
+    }
+
+    function resetBookingFormState() {
       if (!submitButton) {
         return;
       }
 
-      const defaultLabel = submitButton.textContent;
-      submitButton.textContent = "\u2713 Request Sent!";
-      submitButton.style.background = "#2d7a3a";
-      submitButton.disabled = true;
+      submitButton.textContent = defaultButtonLabel;
+      submitButton.style.background = "";
+      submitButton.disabled = false;
 
-      window.setTimeout(() => {
-        submitButton.textContent = defaultLabel;
-        submitButton.style.background = "";
-        submitButton.disabled = false;
-        bookingForm.reset();
+      if (bookingNote) {
+        bookingNote.textContent = defaultBookingNote;
+      }
+    }
+
+    // SUCCESS AND ERROR HANDLING: Temporary user feedback is controlled in this helper.
+    function showBookingMessage(message, { isSuccess = false, resetForm = false, duration = 4000 } = {}) {
+      if (!submitButton) {
+        return;
+      }
+
+      clearBookingMessageTimeout();
+
+      submitButton.textContent = isSuccess ? "\u2713 Request Sent!" : defaultButtonLabel;
+      submitButton.style.background = isSuccess ? "#2d7a3a" : "";
+      submitButton.disabled = !isSuccess ? false : true;
+
+      if (bookingNote) {
+        bookingNote.textContent = message;
+      }
+
+      bookingMessageTimeout = window.setTimeout(() => {
+        if (resetForm) {
+          bookingForm.reset();
+        }
+
+        resetBookingFormState();
 
         if (pickupInput) {
           dropoffInput.min = pickupInput.min;
         }
-      }, 4000);
+      }, duration);
+    }
+
+    bookingForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!submitButton) {
+        return;
+      }
+
+      clearBookingMessageTimeout();
+      submitButton.textContent = "Sending...";
+      submitButton.style.background = "";
+      submitButton.disabled = true;
+
+      if (bookingNote) {
+        bookingNote.textContent = "Sending your reservation request...";
+      }
+
+      // FIELD MAPPING: These keys are sent to GoHighLevel exactly as requested.
+      const payload = {
+        fullName: document.getElementById("name")?.value.trim() || "",
+        phone: document.getElementById("phone")?.value.trim() || "",
+        vehicleChoice: vehicleSelect?.options[vehicleSelect.selectedIndex]?.text || vehicleSelect?.value || "",
+        pickupDate: pickupInput?.value || "",
+        pickupTime: pickupTimeInput?.value || "",
+        dropoffDate: dropoffInput?.value || "",
+        dropoffTime: dropoffTimeInput?.value || "",
+        // WEBHOOK PAYLOAD SMS CONSENT FIELD
+        smsConsent: Boolean(smsConsentInput?.checked),
+      };
+
+      try {
+        const response = await fetch(bookingWebhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json, text/plain, */*",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const responseText = await response.text();
+        let responseData = responseText;
+
+        try {
+          responseData = responseText ? JSON.parse(responseText) : null;
+        } catch {
+          responseData = responseText;
+        }
+
+        console.log("Fox's Fleet booking webhook response", {
+          ok: response.ok,
+          status: response.status,
+          data: responseData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Webhook request failed with status ${response.status}`);
+        }
+
+        showBookingMessage("Reservation request received. We'll be in touch shortly.", {
+          isSuccess: true,
+          resetForm: true,
+          duration: 4000,
+        });
+      } catch (error) {
+        console.error("Fox's Fleet booking webhook error", error);
+        showBookingMessage("We couldn't send your request. Please try again or call/text us directly.", {
+          isSuccess: false,
+          resetForm: false,
+          duration: 5000,
+        });
+      }
     });
   }
 
