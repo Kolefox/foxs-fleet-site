@@ -1123,7 +1123,86 @@
  .modal .btn-primary{
  width:100%;
  padding:17px;
-}
+ }
+ /* SUCCESS POPUP STYLING */
+ .modal-backdrop-success{
+ align-items:center;
+ padding:24px 18px;
+ overflow:hidden;
+ }
+ .success-celebration-canvas{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ pointer-events:none;
+ z-index:0;
+ }
+ .modal-success{
+ position:relative;
+ z-index:1;
+ max-width:500px;
+ max-height:none;
+ overflow:hidden;
+ border-radius:14px;
+ background:linear-gradient(180deg,rgba(20,20,20,0.98) 0%,rgba(12,12,12,0.98) 100%);
+ transform:translateY(18px) scale(0.98);
+ }
+ .modal-backdrop-success.open .modal-success{
+ transform:translateY(0) scale(1);
+ }
+ .success-modal-body{
+ padding:34px 24px 30px;
+ text-align:center;
+ }
+ .success-modal-title{
+ margin-bottom:0;
+ }
+ .success-modal-divider{
+ margin:16px auto 18px;
+ }
+ .success-modal-desc{
+ max-width:32ch;
+ margin:0 auto 24px;
+ }
+ .success-modal-note{
+ font-size:11px;
+ color:var(--text-muted);
+ line-height:1.65;
+ margin-top:14px;
+ }
+ @media (min-width:640px){
+ .modal-backdrop-success{
+ padding:28px 24px;
+ }
+ .success-modal-body{
+ padding:42px 38px 36px;
+ }
+ .success-modal-title{
+ font-size:2rem;
+ }
+ }
+ @media (max-width:479px){
+ .modal-backdrop-success{
+ padding:18px 14px;
+ }
+ .modal-success{
+ border-radius:12px;
+ }
+ .success-modal-body{
+ padding:28px 18px 24px;
+ }
+ .success-modal-title{
+ font-size:1.6rem;
+ }
+ .success-modal-desc{
+ font-size:12px;
+ margin-bottom:22px;
+ }
+ .success-modal-note{
+ font-size:10px;
+ }
+ }
  footer{
  background:#050505;
  padding:50px 24px 32px;

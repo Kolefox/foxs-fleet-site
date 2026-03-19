@@ -16,6 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const bookingRangeValue = bookingRangeSummary?.querySelector("[data-booking-range-value]") || null;
   const bookingRangeMeta = bookingRangeSummary?.querySelector("[data-booking-range-meta]") || null;
   const bookingNote = bookingForm?.querySelector(".booking-note") || null;
+  const bookingSuccessModal = document.getElementById("modal-booking-success");
+  const bookingSuccessCloseButton = bookingSuccessModal?.querySelector('[data-modal-close="booking-success"]') || null;
+  const bookingSuccessCanvas = document.getElementById("booking-success-celebration");
+  const bookingSuccessCanvasContext = bookingSuccessCanvas?.getContext("2d") || null;
+  let bookingSuccessParticles = [];
+  let bookingSuccessAnimationFrame = 0;
+  let bookingSuccessReturnFocusTarget = null;
 
   // BOOKING WEBHOOK URL: Update this if the GoHighLevel inbound webhook ever changes.
   const bookingWebhookUrl =
@@ -26,6 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  }
+
+  function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
   }
 
   // PHONE INPUT AUTO-FORMAT LOGIC: Keep the visible phone number polished while preserving a clean raw digits-only version internally.
@@ -178,9 +189,187 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function resizeBookingSuccessCanvas() {
+    if (!bookingSuccessCanvas || !bookingSuccessCanvasContext) {
+      return;
+    }
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+    bookingSuccessCanvas.width = Math.floor(viewportWidth * pixelRatio);
+    bookingSuccessCanvas.height = Math.floor(viewportHeight * pixelRatio);
+    bookingSuccessCanvas.style.width = `${viewportWidth}px`;
+    bookingSuccessCanvas.style.height = `${viewportHeight}px`;
+    bookingSuccessCanvasContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  }
+
+  function stopBookingSuccessCelebration() {
+    if (bookingSuccessAnimationFrame) {
+      window.cancelAnimationFrame(bookingSuccessAnimationFrame);
+      bookingSuccessAnimationFrame = 0;
+    }
+
+    bookingSuccessParticles = [];
+
+    if (bookingSuccessCanvasContext && bookingSuccessCanvas) {
+      bookingSuccessCanvasContext.clearRect(0, 0, bookingSuccessCanvas.clientWidth || 0, bookingSuccessCanvas.clientHeight || 0);
+    }
+  }
+
+  function drawBookingSuccessParticle(particle) {
+    if (!bookingSuccessCanvasContext) {
+      return;
+    }
+
+    bookingSuccessCanvasContext.save();
+    bookingSuccessCanvasContext.translate(particle.x, particle.y);
+    bookingSuccessCanvasContext.rotate(particle.rotation);
+    bookingSuccessCanvasContext.globalAlpha = Math.max(particle.life / particle.maxLife, 0) * 0.92;
+    bookingSuccessCanvasContext.fillStyle = particle.color;
+
+    if (particle.shape === "rect") {
+      bookingSuccessCanvasContext.fillRect(-particle.size * 0.65, -particle.size * 0.22, particle.size * 1.3, particle.size * 0.44);
+    } else {
+      bookingSuccessCanvasContext.beginPath();
+      bookingSuccessCanvasContext.arc(0, 0, particle.size, 0, Math.PI * 2);
+      bookingSuccessCanvasContext.fill();
+    }
+
+    bookingSuccessCanvasContext.restore();
+  }
+
+  function createBookingSuccessParticles(viewportWidth, viewportHeight) {
+    const palette = ["#c9a84c", "#e2c278", "#f3ead2", "#ffffff", "#b88a34"];
+    const burstOrigins = [
+      { x: viewportWidth * 0.22, y: Math.min(viewportHeight * 0.26, 220), count: 15, speedMin: 1.9, speedMax: 3.7 },
+      { x: viewportWidth * 0.78, y: Math.min(viewportHeight * 0.22, 200), count: 15, speedMin: 1.9, speedMax: 3.7 },
+      { x: viewportWidth * 0.5, y: Math.min(viewportHeight * 0.18, 150), count: 10, speedMin: 1.3, speedMax: 2.8 },
+    ];
+
+    bookingSuccessParticles = [];
+
+    burstOrigins.forEach((origin) => {
+      for (let index = 0; index < origin.count; index += 1) {
+        const shape = Math.random() > 0.52 ? "rect" : "circle";
+        const maxLife = randomBetween(42, 64);
+        const angle = randomBetween(0, Math.PI * 2);
+        const speed = randomBetween(origin.speedMin, origin.speedMax);
+
+        bookingSuccessParticles.push({
+          x: origin.x,
+          y: origin.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - randomBetween(0.15, 0.75),
+          gravity: randomBetween(0.018, 0.04),
+          drag: randomBetween(0.972, 0.985),
+          life: maxLife,
+          maxLife,
+          size: shape === "rect" ? randomBetween(4.2, 7.2) : randomBetween(1.8, 3.2),
+          rotation: randomBetween(0, Math.PI * 2),
+          spin: randomBetween(-0.12, 0.12),
+          color: palette[Math.floor(Math.random() * palette.length)],
+          shape,
+        });
+      }
+    });
+
+    for (let index = 0; index < 20; index += 1) {
+      const maxLife = randomBetween(88, 122);
+
+      bookingSuccessParticles.push({
+        x: randomBetween(viewportWidth * 0.14, viewportWidth * 0.86),
+        y: randomBetween(-16, viewportHeight * 0.08),
+        vx: randomBetween(-0.35, 0.35),
+        vy: randomBetween(1.1, 2.4),
+        gravity: randomBetween(0.008, 0.018),
+        drag: randomBetween(0.988, 0.995),
+        life: maxLife,
+        maxLife,
+        size: randomBetween(4.8, 7.6),
+        rotation: randomBetween(0, Math.PI * 2),
+        spin: randomBetween(-0.1, 0.1),
+        color: palette[Math.floor(Math.random() * palette.length)],
+        shape: "rect",
+      });
+    }
+  }
+
+  // FIREWORKS/CONFETTI SUCCESS EFFECT: Lightweight gold-and-white celebration that runs only after a confirmed successful submission.
+  function playBookingSuccessCelebration() {
+    if (
+      !bookingSuccessCanvas ||
+      !bookingSuccessCanvasContext ||
+      (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    ) {
+      return;
+    }
+
+    stopBookingSuccessCelebration();
+    resizeBookingSuccessCanvas();
+
+    const viewportWidth = bookingSuccessCanvas.clientWidth || window.innerWidth;
+    const viewportHeight = bookingSuccessCanvas.clientHeight || window.innerHeight;
+    let previousFrameTime = performance.now();
+
+    createBookingSuccessParticles(viewportWidth, viewportHeight);
+
+    function animateBookingSuccessCelebration(currentTime) {
+      const delta = Math.min((currentTime - previousFrameTime) / 16.6667, 1.7);
+      previousFrameTime = currentTime;
+
+      bookingSuccessCanvasContext.clearRect(0, 0, viewportWidth, viewportHeight);
+
+      bookingSuccessParticles = bookingSuccessParticles.filter((particle) => {
+        particle.x += particle.vx * delta;
+        particle.y += particle.vy * delta;
+        particle.vx *= particle.drag;
+        particle.vy = particle.vy * particle.drag + particle.gravity * delta;
+        particle.rotation += particle.spin * delta;
+        particle.life -= delta;
+
+        if (particle.life <= 0 || particle.y > viewportHeight + 28) {
+          return false;
+        }
+
+        drawBookingSuccessParticle(particle);
+        return true;
+      });
+
+      if (bookingSuccessParticles.length === 0) {
+        stopBookingSuccessCelebration();
+        return;
+      }
+
+      bookingSuccessAnimationFrame = window.requestAnimationFrame(animateBookingSuccessCelebration);
+    }
+
+    bookingSuccessAnimationFrame = window.requestAnimationFrame(animateBookingSuccessCelebration);
+  }
+
+  function handleBookingSuccessModalClosed() {
+    stopBookingSuccessCelebration();
+
+    if (
+      bookingSuccessReturnFocusTarget &&
+      typeof bookingSuccessReturnFocusTarget.focus === "function" &&
+      !bookingSuccessReturnFocusTarget.hasAttribute("disabled")
+    ) {
+      bookingSuccessReturnFocusTarget.focus({ preventScroll: true });
+    }
+
+    bookingSuccessReturnFocusTarget = null;
+  }
+
   function closeAllModals() {
+    const bookingSuccessWasOpen = Boolean(bookingSuccessModal?.classList.contains("open"));
     modalBackdrops.forEach((modal) => modal.classList.remove("open"));
     document.body.style.overflow = "";
+
+    if (bookingSuccessWasOpen) {
+      handleBookingSuccessModalClosed();
+    }
   }
 
   function openModal(modalId) {
@@ -191,6 +380,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modal.classList.add("open");
     document.body.style.overflow = "hidden";
+  }
+
+  function closeModalElement(modal) {
+    if (!modal) {
+      return;
+    }
+
+    const isBookingSuccessModal = modal === bookingSuccessModal;
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+
+    if (isBookingSuccessModal) {
+      handleBookingSuccessModalClosed();
+    }
+  }
+
+  // SUCCESS MODAL OPEN/CLOSE BEHAVIOR: Move focus into the success popup when it opens and allow clean dismissal by button, overlay, or Escape.
+  function openBookingSuccessModal() {
+    if (!bookingSuccessModal) {
+      return;
+    }
+
+    bookingSuccessReturnFocusTarget = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    openModal("booking-success");
+
+    window.requestAnimationFrame(() => {
+      bookingSuccessCloseButton?.focus({ preventScroll: true });
+    });
   }
 
   function scrollToSection(sectionId, vehicleId = "") {
@@ -700,10 +917,7 @@ document.addEventListener("DOMContentLoaded", () => {
     button.addEventListener("click", () => {
       const modalId = button.dataset.modalClose;
       const modal = document.getElementById(`modal-${modalId}`);
-      if (modal) {
-        modal.classList.remove("open");
-      }
-      document.body.style.overflow = "";
+      closeModalElement(modal);
     });
   });
 
@@ -713,9 +927,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      modal.classList.remove("open");
-      document.body.style.overflow = "";
+      closeModalElement(modal);
     });
+  });
+
+  window.addEventListener("resize", () => {
+    if (bookingSuccessModal?.classList.contains("open")) {
+      resizeBookingSuccessCanvas();
+    }
   });
 
   document.addEventListener("keydown", (event) => {
@@ -851,6 +1070,9 @@ document.addEventListener("DOMContentLoaded", () => {
           resetForm: true,
           duration: 4000,
         });
+        // SUCCESSFUL SUBMISSION POPUP LOGIC: Open the luxury success modal and launch the celebration only after the webhook confirms success.
+        openBookingSuccessModal();
+        playBookingSuccessCelebration();
       } catch (error) {
         console.error("Fox's Fleet booking webhook error", error);
         showBookingMessage("We couldn't send your request. Please try again or call/text us directly.", {
