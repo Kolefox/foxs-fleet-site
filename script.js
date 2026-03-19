@@ -22,11 +22,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const bookingSuccessCanvasContext = bookingSuccessCanvas?.getContext("2d") || null;
   let bookingSuccessParticles = [];
   let bookingSuccessAnimationFrame = 0;
+  let bookingSuccessTimers = [];
   let bookingSuccessReturnFocusTarget = null;
 
   // BOOKING WEBHOOK URL: Update this if the GoHighLevel inbound webhook ever changes.
   const bookingWebhookUrl =
     "https://services.leadconnectorhq.com/hooks/VS0PZHPpr79qaZ00fQJo/webhook-trigger/2070309d-b0c7-48f5-8f8c-0550a333ab4a";
+
+  // EXPANDED FIREWORKS/CONFETTI SETTINGS: Increase burst count, screen coverage, and total run time here.
+  const bookingSuccessCelebrationSettings = {
+    durationMs: 4400,
+    compactViewportScale: 0.82,
+    palette: ["#c9a84c", "#e2c278", "#f3ead2", "#ffffff", "#b88a34"],
+    // LARGER BURST / PARTICLE SPREAD SETTINGS
+    burstWaves: [
+      { delayMs: 0, originRatios: [0.16, 0.5, 0.84], yRatio: 0.17, burstCount: 18, speedMin: 2.9, speedMax: 5.3, lifeMin: 92, lifeMax: 138 },
+      { delayMs: 420, originRatios: [0.28, 0.72], yRatio: 0.24, burstCount: 24, speedMin: 3.1, speedMax: 5.9, lifeMin: 108, lifeMax: 156 },
+      { delayMs: 980, originRatios: [0.12, 0.4, 0.6, 0.88], yRatio: 0.15, burstCount: 16, speedMin: 2.7, speedMax: 5.1, lifeMin: 94, lifeMax: 144 },
+      { delayMs: 1580, originRatios: [0.22, 0.5, 0.78], yRatio: 0.28, burstCount: 22, speedMin: 2.5, speedMax: 4.8, lifeMin: 120, lifeMax: 172 },
+      { delayMs: 2380, originRatios: [0.36, 0.64], yRatio: 0.2, burstCount: 20, speedMin: 2.3, speedMax: 4.4, lifeMin: 124, lifeMax: 178 },
+    ],
+    // INCREASED DURATION
+    driftBursts: [
+      { delayMs: 180, count: 22 },
+      { delayMs: 760, count: 18 },
+      { delayMs: 1460, count: 18 },
+      { delayMs: 2280, count: 16 },
+      { delayMs: 3040, count: 12 },
+    ],
+  };
 
   function getLocalDateInputValue(date = new Date()) {
     const year = date.getFullYear();
@@ -211,6 +235,9 @@ document.addEventListener("DOMContentLoaded", () => {
       bookingSuccessAnimationFrame = 0;
     }
 
+    bookingSuccessTimers.forEach((timerId) => window.clearTimeout(timerId));
+    bookingSuccessTimers = [];
+
     bookingSuccessParticles = [];
 
     if (bookingSuccessCanvasContext && bookingSuccessCanvas) {
@@ -240,58 +267,68 @@ document.addEventListener("DOMContentLoaded", () => {
     bookingSuccessCanvasContext.restore();
   }
 
-  function createBookingSuccessParticles(viewportWidth, viewportHeight) {
-    const palette = ["#c9a84c", "#e2c278", "#f3ead2", "#ffffff", "#b88a34"];
-    const burstOrigins = [
-      { x: viewportWidth * 0.22, y: Math.min(viewportHeight * 0.26, 220), count: 15, speedMin: 1.9, speedMax: 3.7 },
-      { x: viewportWidth * 0.78, y: Math.min(viewportHeight * 0.22, 200), count: 15, speedMin: 1.9, speedMax: 3.7 },
-      { x: viewportWidth * 0.5, y: Math.min(viewportHeight * 0.18, 150), count: 10, speedMin: 1.3, speedMax: 2.8 },
-    ];
+  function queueBookingSuccessTimer(callback, delayMs) {
+    const timerId = window.setTimeout(() => {
+      bookingSuccessTimers = bookingSuccessTimers.filter((queuedTimerId) => queuedTimerId !== timerId);
+      callback();
+    }, delayMs);
 
-    bookingSuccessParticles = [];
+    bookingSuccessTimers.push(timerId);
+  }
 
-    burstOrigins.forEach((origin) => {
-      for (let index = 0; index < origin.count; index += 1) {
-        const shape = Math.random() > 0.52 ? "rect" : "circle";
-        const maxLife = randomBetween(42, 64);
-        const angle = randomBetween(0, Math.PI * 2);
-        const speed = randomBetween(origin.speedMin, origin.speedMax);
+  function spawnBookingSuccessBurst(originX, originY, waveConfig, intensityScale) {
+    const particleCount = Math.max(10, Math.round(waveConfig.burstCount * intensityScale));
 
-        bookingSuccessParticles.push({
-          x: origin.x,
-          y: origin.y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - randomBetween(0.15, 0.75),
-          gravity: randomBetween(0.018, 0.04),
-          drag: randomBetween(0.972, 0.985),
-          life: maxLife,
-          maxLife,
-          size: shape === "rect" ? randomBetween(4.2, 7.2) : randomBetween(1.8, 3.2),
-          rotation: randomBetween(0, Math.PI * 2),
-          spin: randomBetween(-0.12, 0.12),
-          color: palette[Math.floor(Math.random() * palette.length)],
-          shape,
-        });
-      }
-    });
-
-    for (let index = 0; index < 20; index += 1) {
-      const maxLife = randomBetween(88, 122);
+    for (let index = 0; index < particleCount; index += 1) {
+      const shape = Math.random() > 0.46 ? "rect" : "circle";
+      const maxLife = randomBetween(waveConfig.lifeMin, waveConfig.lifeMax);
+      const angle = randomBetween(0, Math.PI * 2);
+      const speed = randomBetween(waveConfig.speedMin, waveConfig.speedMax);
 
       bookingSuccessParticles.push({
-        x: randomBetween(viewportWidth * 0.14, viewportWidth * 0.86),
-        y: randomBetween(-16, viewportHeight * 0.08),
-        vx: randomBetween(-0.35, 0.35),
-        vy: randomBetween(1.1, 2.4),
-        gravity: randomBetween(0.008, 0.018),
-        drag: randomBetween(0.988, 0.995),
+        x: originX,
+        y: originY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - randomBetween(0.2, 0.9),
+        gravity: randomBetween(0.013, 0.03),
+        drag: randomBetween(0.976, 0.989),
         life: maxLife,
         maxLife,
-        size: randomBetween(4.8, 7.6),
+        size: shape === "rect" ? randomBetween(5.2, 8.8) : randomBetween(2.3, 4.1),
         rotation: randomBetween(0, Math.PI * 2),
-        spin: randomBetween(-0.1, 0.1),
-        color: palette[Math.floor(Math.random() * palette.length)],
-        shape: "rect",
+        spin: randomBetween(-0.14, 0.14),
+        color:
+          bookingSuccessCelebrationSettings.palette[
+            Math.floor(Math.random() * bookingSuccessCelebrationSettings.palette.length)
+          ],
+        shape,
+      });
+    }
+  }
+
+  function spawnBookingSuccessDrift(viewportWidth, viewportHeight, driftConfig, intensityScale) {
+    const particleCount = Math.max(8, Math.round(driftConfig.count * intensityScale));
+
+    for (let index = 0; index < particleCount; index += 1) {
+      const maxLife = randomBetween(126, 188);
+
+      bookingSuccessParticles.push({
+        x: randomBetween(viewportWidth * 0.08, viewportWidth * 0.92),
+        y: randomBetween(-24, viewportHeight * 0.12),
+        vx: randomBetween(-0.65, 0.65),
+        vy: randomBetween(1.25, 2.95),
+        gravity: randomBetween(0.006, 0.015),
+        drag: randomBetween(0.989, 0.996),
+        life: maxLife,
+        maxLife,
+        size: randomBetween(5.4, 9.6),
+        rotation: randomBetween(0, Math.PI * 2),
+        spin: randomBetween(-0.12, 0.12),
+        color:
+          bookingSuccessCelebrationSettings.palette[
+            Math.floor(Math.random() * bookingSuccessCelebrationSettings.palette.length)
+          ],
+        shape: Math.random() > 0.3 ? "rect" : "circle",
       });
     }
   }
@@ -311,12 +348,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const viewportWidth = bookingSuccessCanvas.clientWidth || window.innerWidth;
     const viewportHeight = bookingSuccessCanvas.clientHeight || window.innerHeight;
+    const intensityScale = viewportWidth < 640 ? bookingSuccessCelebrationSettings.compactViewportScale : 1;
+    const celebrationStartedAt = performance.now();
     let previousFrameTime = performance.now();
 
-    createBookingSuccessParticles(viewportWidth, viewportHeight);
+    bookingSuccessParticles = [];
+
+    bookingSuccessCelebrationSettings.burstWaves.forEach((waveConfig) => {
+      queueBookingSuccessTimer(() => {
+        waveConfig.originRatios.forEach((originRatio) => {
+          const originX = viewportWidth * originRatio + randomBetween(-viewportWidth * 0.035, viewportWidth * 0.035);
+          const originY = Math.min(
+            viewportHeight * waveConfig.yRatio + randomBetween(-18, 18),
+            viewportHeight * 0.34,
+          );
+
+          spawnBookingSuccessBurst(originX, originY, waveConfig, intensityScale);
+        });
+      }, waveConfig.delayMs);
+    });
+
+    bookingSuccessCelebrationSettings.driftBursts.forEach((driftConfig) => {
+      queueBookingSuccessTimer(() => {
+        spawnBookingSuccessDrift(viewportWidth, viewportHeight, driftConfig, intensityScale);
+      }, driftConfig.delayMs);
+    });
 
     function animateBookingSuccessCelebration(currentTime) {
       const delta = Math.min((currentTime - previousFrameTime) / 16.6667, 1.7);
+      const elapsedMs = currentTime - celebrationStartedAt;
       previousFrameTime = currentTime;
 
       bookingSuccessCanvasContext.clearRect(0, 0, viewportWidth, viewportHeight);
@@ -337,7 +397,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
       });
 
-      if (bookingSuccessParticles.length === 0) {
+      const celebrationHasCompleted =
+        elapsedMs >= bookingSuccessCelebrationSettings.durationMs && bookingSuccessTimers.length === 0;
+
+      if (bookingSuccessParticles.length === 0 && celebrationHasCompleted) {
         stopBookingSuccessCelebration();
         return;
       }
@@ -496,6 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
     autoplaySpeed: 4000,
     transitionDuration: 700,
     swipeThreshold: 56,
+    dragIntentThreshold: 14,
     cardsVisible: {
       desktop: 3,
       tablet: 2,
@@ -537,7 +601,9 @@ document.addEventListener("DOMContentLoaded", () => {
       let isFocused = false;
       let isTransitioning = false;
       let dragStartX = 0;
+      let dragStartY = 0;
       let dragDeltaX = 0;
+      let hasHorizontalDragIntent = false;
       let activePointerId = null;
 
       function createClone(slide) {
@@ -744,6 +810,31 @@ document.addEventListener("DOMContentLoaded", () => {
         goToIndex(currentIndex + direction, { animated: true, restartAutoplay });
       }
 
+      function resetDragState() {
+        viewport.classList.remove("is-dragging");
+        isDragging = false;
+        hasHorizontalDragIntent = false;
+        dragDeltaX = 0;
+        activePointerId = null;
+      }
+
+      function cancelDrag(pointerId) {
+        if (!isDragging) {
+          return;
+        }
+
+        if (typeof pointerId === "number" && viewport.hasPointerCapture?.(pointerId)) {
+          viewport.releasePointerCapture(pointerId);
+        }
+
+        if (hasHorizontalDragIntent) {
+          goToIndex(currentIndex, { animated: true, restartAutoplay: true });
+        }
+
+        resetDragState();
+        startAutoplay();
+      }
+
       function finishDrag(pointerId) {
         if (!isDragging) {
           return;
@@ -753,9 +844,13 @@ document.addEventListener("DOMContentLoaded", () => {
           viewport.releasePointerCapture(pointerId);
         }
 
-        viewport.classList.remove("is-dragging");
-        isDragging = false;
+        if (!hasHorizontalDragIntent) {
+          resetDragState();
+          startAutoplay();
+          return;
+        }
 
+        // SWIPE THRESHOLD LOGIC TO AVOID ACCIDENTAL TRIGGERS
         const swipeThreshold = Math.max(settings.swipeThreshold, slideWidth * 0.12);
 
         if (Math.abs(dragDeltaX) > swipeThreshold) {
@@ -764,8 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
           goToIndex(currentIndex, { animated: true, restartAutoplay: true });
         }
 
-        dragDeltaX = 0;
-        activePointerId = null;
+        resetDragState();
       }
 
       dots.forEach((dot) => {
@@ -785,6 +879,8 @@ document.addEventListener("DOMContentLoaded", () => {
         normalizeIndex();
       });
 
+      // TESTIMONIAL SWIPE SUPPORT
+      // TOUCH START LOGIC: Wait for a clearly horizontal gesture before locking the carousel into a swipe.
       viewport.addEventListener("pointerdown", (event) => {
         if ((event.pointerType === "mouse" && event.button !== 0) || isTransitioning) {
           return;
@@ -796,23 +892,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
         activePointerId = event.pointerId;
         dragStartX = event.clientX;
+        dragStartY = event.clientY;
         dragDeltaX = 0;
         isDragging = true;
-        viewport.classList.add("is-dragging");
-        clearAutoplay();
-        setTrackTransition(false);
-        viewport.setPointerCapture?.(event.pointerId);
+        hasHorizontalDragIntent = event.pointerType === "mouse";
+
+        if (hasHorizontalDragIntent) {
+          viewport.classList.add("is-dragging");
+          clearAutoplay();
+          setTrackTransition(false);
+          viewport.setPointerCapture?.(event.pointerId);
+        }
       });
 
+      // TOUCH MOVE LOGIC: Only treat the gesture as a swipe once sideways movement clearly wins over vertical scrolling.
       viewport.addEventListener("pointermove", (event) => {
         if (!isDragging || event.pointerId !== activePointerId) {
           return;
         }
 
-        dragDeltaX = event.clientX - dragStartX;
+        const nextDragDeltaX = event.clientX - dragStartX;
+        const dragDeltaY = event.clientY - dragStartY;
+
+        if (!hasHorizontalDragIntent) {
+          const gestureThreshold = settings.dragIntentThreshold;
+
+          if (Math.abs(nextDragDeltaX) < gestureThreshold && Math.abs(dragDeltaY) < gestureThreshold) {
+            return;
+          }
+
+          if (Math.abs(dragDeltaY) > Math.abs(nextDragDeltaX)) {
+            cancelDrag(event.pointerId);
+            return;
+          }
+
+          hasHorizontalDragIntent = true;
+          viewport.classList.add("is-dragging");
+          clearAutoplay();
+          setTrackTransition(false);
+          viewport.setPointerCapture?.(event.pointerId);
+        }
+
+        if (event.cancelable) {
+          event.preventDefault();
+        }
+
+        dragDeltaX = nextDragDeltaX;
         track.style.transform = `translate3d(${-getOffsetForIndex(currentIndex) + dragDeltaX}px, 0, 0)`;
       });
 
+      // TOUCH END LOGIC
       viewport.addEventListener("pointerup", (event) => {
         if (event.pointerId !== activePointerId) {
           return;
@@ -826,7 +955,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        finishDrag(event.pointerId);
+        cancelDrag(event.pointerId);
       });
 
       carousel.addEventListener("mouseenter", () => {
