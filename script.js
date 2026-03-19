@@ -5,17 +5,178 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalOpenButtons = document.querySelectorAll("[data-modal-open]");
   const modalCloseButtons = document.querySelectorAll("[data-modal-close]");
   const bookingForm = document.getElementById("booking-form");
+  const phoneInput = document.getElementById("phone");
   const vehicleSelect = document.getElementById("vehicle");
   const pickupInput = document.getElementById("pickup");
   const pickupTimeInput = document.getElementById("pickup-time");
   const dropoffInput = document.getElementById("dropoff");
   const dropoffTimeInput = document.getElementById("dropoff-time");
   const smsConsentInput = document.getElementById("sms-consent");
+  const bookingRangeSummary = document.getElementById("booking-range-summary");
+  const bookingRangeValue = bookingRangeSummary?.querySelector("[data-booking-range-value]") || null;
+  const bookingRangeMeta = bookingRangeSummary?.querySelector("[data-booking-range-meta]") || null;
   const bookingNote = bookingForm?.querySelector(".booking-note") || null;
 
   // BOOKING WEBHOOK URL: Update this if the GoHighLevel inbound webhook ever changes.
   const bookingWebhookUrl =
     "https://services.leadconnectorhq.com/hooks/VS0PZHPpr79qaZ00fQJo/webhook-trigger/2070309d-b0c7-48f5-8f8c-0550a333ab4a";
+
+  function getLocalDateInputValue(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  // PHONE INPUT AUTO-FORMAT LOGIC: Keep the visible phone number polished while preserving a clean raw digits-only version internally.
+  function getPhoneDigits(value = "") {
+    return value.replace(/\D/g, "").slice(0, 10);
+  }
+
+  function formatPhoneDigits(digits = "") {
+    if (!digits) {
+      return "";
+    }
+
+    if (digits.length <= 3) {
+      return `(${digits}`;
+    }
+
+    if (digits.length <= 6) {
+      return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    }
+
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  }
+
+  function getDigitCountBeforeCursor(value = "", cursorPosition = value.length) {
+    return value.slice(0, cursorPosition).replace(/\D/g, "").length;
+  }
+
+  function getCursorPositionForDigitCount(formattedValue = "", digitCount = 0) {
+    if (digitCount <= 0) {
+      return 0;
+    }
+
+    let visibleDigits = 0;
+
+    for (let index = 0; index < formattedValue.length; index += 1) {
+      if (/\d/.test(formattedValue[index])) {
+        visibleDigits += 1;
+      }
+
+      if (visibleDigits >= digitCount) {
+        return index + 1;
+      }
+    }
+
+    return formattedValue.length;
+  }
+
+  // DISPLAYED FORMATTING IS APPLIED HERE: Smoothly format typing, paste, and backspace without changing the existing phone payload key.
+  function applyPhoneFormatting(input, { preserveCursor = true } = {}) {
+    if (!input) {
+      return "";
+    }
+
+    const currentValue = input.value;
+    const rawDigits = getPhoneDigits(currentValue);
+    const formattedValue = formatPhoneDigits(rawDigits);
+
+    // RAW PHONE CLEANUP LOGIC: Store a clean 10-digit version internally for future use while keeping the current submission structure intact.
+    input.dataset.rawPhone = rawDigits;
+
+    if (currentValue === formattedValue) {
+      return rawDigits;
+    }
+
+    const cursorPosition = input.selectionStart ?? currentValue.length;
+    const digitsBeforeCursor = getDigitCountBeforeCursor(currentValue, cursorPosition);
+    input.value = formattedValue;
+
+    if (preserveCursor && document.activeElement === input && typeof input.setSelectionRange === "function") {
+      const nextCursorPosition = getCursorPositionForDigitCount(formattedValue, digitsBeforeCursor);
+      input.setSelectionRange(nextCursorPosition, nextCursorPosition);
+    }
+
+    return rawDigits;
+  }
+
+  const bookingDateFormatter = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  function parseDateInputValue(value = "") {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (!match) {
+      return null;
+    }
+
+    const [, year, month, day] = match;
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  }
+
+  // PICKUP/DROP-OFF DATE COMPARISON LOGIC: Keep drop-off aligned with pickup and reset invalid ranges cleanly.
+  function synchronizeBookingDates() {
+    if (!pickupInput || !dropoffInput) {
+      return;
+    }
+
+    const today = getLocalDateInputValue();
+    pickupInput.min = today;
+    dropoffInput.min = pickupInput.value || today;
+
+    if (dropoffInput.value && pickupInput.value && dropoffInput.value < pickupInput.value) {
+      dropoffInput.value = pickupInput.value;
+    }
+  }
+
+  function hideBookingRangeSummary() {
+    if (!bookingRangeSummary || !bookingRangeValue || !bookingRangeMeta) {
+      return;
+    }
+
+    bookingRangeSummary.hidden = true;
+    bookingRangeValue.textContent = "";
+    bookingRangeMeta.textContent = "";
+  }
+
+  // RENTAL DATE RANGE LOGIC: Native range highlighting is unreliable on iPhone, so this premium fallback shows the selected booking window.
+  function updateBookingRangeSummary() {
+    if (!pickupInput || !dropoffInput || !bookingRangeSummary || !bookingRangeValue || !bookingRangeMeta) {
+      return;
+    }
+
+    const pickupDate = parseDateInputValue(pickupInput.value);
+    const dropoffDate = parseDateInputValue(dropoffInput.value);
+
+    if (!pickupDate || !dropoffDate) {
+      hideBookingRangeSummary();
+      return;
+    }
+
+    const rentalDays = Math.round((dropoffDate.getTime() - pickupDate.getTime()) / 86400000);
+
+    if (rentalDays < 0) {
+      hideBookingRangeSummary();
+      return;
+    }
+
+    // HIGHLIGHTED/FALLBACK BOOKING RANGE DISPLAY LOGIC
+    bookingRangeValue.textContent = `${bookingDateFormatter.format(pickupDate)} - ${bookingDateFormatter.format(dropoffDate)}`;
+    bookingRangeMeta.textContent = rentalDays === 0 ? "Same-day rental window" : `${rentalDays}-day rental window`;
+    bookingRangeSummary.hidden = false;
+  }
+
+  if (phoneInput) {
+    applyPhoneFormatting(phoneInput, { preserveCursor: false });
+    phoneInput.addEventListener("input", () => {
+      applyPhoneFormatting(phoneInput);
+    });
+  }
 
   function closeAllModals() {
     modalBackdrops.forEach((modal) => modal.classList.remove("open"));
@@ -615,13 +776,14 @@ document.addEventListener("DOMContentLoaded", () => {
       bookingMessageTimeout = window.setTimeout(() => {
         if (resetForm) {
           bookingForm.reset();
+          if (phoneInput) {
+            phoneInput.dataset.rawPhone = "";
+          }
+          synchronizeBookingDates();
+          updateBookingRangeSummary();
         }
 
         resetBookingFormState();
-
-        if (pickupInput) {
-          dropoffInput.min = pickupInput.min;
-        }
       }, duration);
     }
 
@@ -700,16 +862,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (pickupInput && dropoffInput) {
-    const today = new Date().toISOString().split("T")[0];
-    pickupInput.min = today;
-    dropoffInput.min = today;
+    synchronizeBookingDates();
+    updateBookingRangeSummary();
 
-    pickupInput.addEventListener("change", () => {
-      dropoffInput.min = pickupInput.value || today;
+    const handleBookingDateChange = () => {
+      synchronizeBookingDates();
+      updateBookingRangeSummary();
+    };
 
-      if (dropoffInput.value && dropoffInput.value < dropoffInput.min) {
-        dropoffInput.value = dropoffInput.min;
-      }
-    });
+    pickupInput.addEventListener("change", handleBookingDateChange);
+    pickupInput.addEventListener("input", handleBookingDateChange);
+    dropoffInput.addEventListener("change", handleBookingDateChange);
+    dropoffInput.addEventListener("input", handleBookingDateChange);
   }
 });

@@ -880,6 +880,37 @@
  #dropoff-time:focus::-webkit-calendar-picker-indicator{
  opacity:0.92;
  }
+ /* BOOKING RANGE DISPLAY STYLING */
+ .booking-range-summary{
+ margin:0 0 18px;
+ padding:14px 16px 13px;
+ border:1px solid rgba(201,168,76,0.16);
+ border-radius:var(--radius);
+ background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.02));
+ text-align:left;
+ }
+ .booking-range-label{
+ display:block;
+ font-size:10px;
+ font-weight:600;
+ letter-spacing:2px;
+ text-transform:uppercase;
+ color:var(--gold);
+ margin-bottom:7px;
+ }
+ .booking-range-value{
+ font-family:var(--font-display);
+ font-size:1.4rem;
+ font-weight:600;
+ line-height:1.18;
+ color:var(--white);
+ }
+ .booking-range-meta{
+ font-size:11px;
+ color:var(--text-muted);
+ line-height:1.6;
+ margin-top:4px;
+ }
  .form-consent{
  margin:2px 0 20px;
  }
@@ -937,6 +968,18 @@
  width:17px;
  height:17px;
 }
+ .booking-range-summary{
+ padding:12px 14px;
+ }
+ .booking-range-label{
+ font-size:9.5px;
+ }
+ .booking-range-value{
+ font-size:1.2rem;
+ }
+ .booking-range-meta{
+ font-size:10px;
+ }
  .consent-disclaimer{
  font-size:9.5px;
  padding-left:27px;
