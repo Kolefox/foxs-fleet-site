@@ -863,10 +863,26 @@
  border-color:rgba(201,168,76,0.45);
  box-shadow:0 0 0 4px rgba(201,168,76,0.08);
  background:#101010;
-}
+ }
+ /* DATE/TIME PICKER ICON COLOR STYLING */
+ /* Native picker icon workaround: tint the WebKit calendar/clock indicators without changing field behavior or clickability. */
+ #pickup::-webkit-calendar-picker-indicator,
+ #pickup-time::-webkit-calendar-picker-indicator,
+ #dropoff::-webkit-calendar-picker-indicator,
+ #dropoff-time::-webkit-calendar-picker-indicator{
+ opacity:0.82;
+ filter:invert(78%) sepia(23%) saturate(694%) hue-rotate(358deg) brightness(95%) contrast(90%);
+ cursor:pointer;
+ }
+ #pickup:focus::-webkit-calendar-picker-indicator,
+ #pickup-time:focus::-webkit-calendar-picker-indicator,
+ #dropoff:focus::-webkit-calendar-picker-indicator,
+ #dropoff-time:focus::-webkit-calendar-picker-indicator{
+ opacity:0.92;
+ }
  .form-consent{
  margin:2px 0 20px;
-}
+ }
  .consent-option{
  display:grid;
  grid-template-columns:auto 1fr;
