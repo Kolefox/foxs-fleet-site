@@ -809,6 +809,7 @@ document.addEventListener("DOMContentLoaded", () => {
         phone: document.getElementById("phone")?.value.trim() || "",
         vehicleChoice: vehicleSelect?.options[vehicleSelect.selectedIndex]?.text || vehicleSelect?.value || "",
         pickupDate: pickupInput?.value || "",
+        // WEBHOOK TIME VALUE PRESERVATION: pickupTime/dropoffTime keys stay exactly the same for GoHighLevel.
         pickupTime: pickupTimeInput?.value || "",
         dropoffDate: dropoffInput?.value || "",
         dropoffTime: dropoffTimeInput?.value || "",
