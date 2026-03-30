@@ -34,6 +34,36 @@ document.addEventListener("DOMContentLoaded", () => {
     "assets/images/escalade-11.jpg",
     "assets/images/escalade-12.jpg",
   ];
+  const teslaGalleryImages = [
+    "assets/images/Tesla-1.jpg",
+    "assets/images/Tesla-2.jpg",
+    "assets/images/Tesla-3.jpg",
+    "assets/images/Tesla-4.jpg",
+    "assets/images/Tesla-5.jpg",
+    "assets/images/Tesla-6.jpg",
+    "assets/images/Tesla-7.jpg",
+    "assets/images/Tesla-8.jpg",
+    "assets/images/Tesla-9.jpg",
+    "assets/images/Tesla-10.jpg",
+    "assets/images/Tesla-11.jpg",
+    "assets/images/Tesla-12.jpg",
+  ];
+  const sharedGalleryConfigurations = {
+    escalade: {
+      images: escaladeGalleryImages,
+      cardImageAltPrefix: "2023 Cadillac Escalade Premium Luxury Platinum photo",
+      modalImageAltPrefix: "2023 Cadillac Escalade detail photo",
+      cardDotAltPrefix: "View Escalade photo",
+      modalDotAltPrefix: "View Escalade detail photo",
+    },
+    tesla: {
+      images: teslaGalleryImages,
+      cardImageAltPrefix: "2023 Tesla Model 3 photo",
+      modalImageAltPrefix: "2023 Tesla Model 3 detail photo",
+      cardDotAltPrefix: "View Tesla photo",
+      modalDotAltPrefix: "View Tesla detail photo",
+    },
+  };
   let bookingSuccessParticles = [];
   let bookingSuccessAnimationFrame = 0;
   let bookingSuccessTimers = [];
@@ -503,18 +533,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // SHARED SLIDESHOW LOGIC: Handles auto-rotation, arrow controls, and dot controls for the Escalade and Tesla galleries.
-  function initializeEscaladeSlideshows() {
-    const escaladeSlideshows = document.querySelectorAll('[data-shared-gallery="escalade"]');
+  function initializeSharedSlideshows() {
+    const sharedSlideshows = document.querySelectorAll("[data-shared-gallery]");
 
-    escaladeSlideshows.forEach((slideshow) => {
+    sharedSlideshows.forEach((slideshow) => {
+      const galleryKey = slideshow.dataset.sharedGallery || "";
+      const galleryConfig = sharedGalleryConfigurations[galleryKey];
+
+      if (!galleryConfig) {
+        return;
+      }
+
       const controls = slideshow.querySelector(".slideshow-controls");
       const dotsContainer = slideshow.querySelector(".slideshow-dots");
-      const galleryType = slideshow.dataset.escaladeGallery === "modal" ? "modal" : "card";
-      const imageAltPrefix =
-        galleryType === "modal"
-          ? "2023 Cadillac Escalade detail photo"
-          : "2023 Cadillac Escalade Premium Luxury Platinum photo";
-      const dotAltPrefix = galleryType === "modal" ? "View Escalade detail photo" : "View Escalade photo";
+      const galleryType = slideshow.dataset[`${galleryKey}Gallery`] === "modal" ? "modal" : "card";
+      const imageAltPrefix = galleryType === "modal" ? galleryConfig.modalImageAltPrefix : galleryConfig.cardImageAltPrefix;
+      const dotAltPrefix = galleryType === "modal" ? galleryConfig.modalDotAltPrefix : galleryConfig.cardDotAltPrefix;
       const slideClassName = galleryType === "modal" ? "slideshow-image modal-img" : "slideshow-image";
       const slideInsertionTarget = controls || dotsContainer || null;
       const slideMarkup = document.createDocumentFragment();
@@ -523,7 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
       slideshow.querySelectorAll(".slideshow-image").forEach((slide) => slide.remove());
       dotsContainer?.replaceChildren();
 
-      escaladeGalleryImages.forEach((imagePath, index) => {
+      galleryConfig.images.forEach((imagePath, index) => {
         const image = document.createElement("img");
         const dot = document.createElement("button");
         const isFirstImage = index === 0;
@@ -1090,7 +1124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fadeInElements.forEach((element) => element.classList.add("visible"));
   }
 
-  initializeEscaladeSlideshows();
+  initializeSharedSlideshows();
   initializeSlideshows();
   initializeTestimonialCarousels(testimonialCarouselSettings);
 
