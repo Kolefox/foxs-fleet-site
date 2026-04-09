@@ -931,6 +931,11 @@
  .consent-copy{
  display:block;
 }
+ .consent-option.consent-invalid{
+ outline:1px solid rgba(201,168,76,0.38);
+ outline-offset:8px;
+ border-radius:2px;
+}
  .consent-disclaimer{
  font-size:10px;
  color:var(--text-muted);

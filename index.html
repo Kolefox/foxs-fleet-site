@@ -538,6 +538,7 @@
           <div class="form-group">
             <label for="dropoff">Drop-Off Date</label>
             <input type="date" id="dropoff" name="dropoff" required />
+            <p id="rental-duration-error" class="field-error" hidden>Reservations must be at least 24 hours long.</p>
           </div>
           <div class="form-group">
             <!-- DROP-OFF TIME DROPDOWN -->
@@ -563,8 +564,6 @@
           </div>
         </div>
 
-        <p id="rental-duration-error" class="field-error" hidden>Reservations must be at least 24 hours long.</p>
-
         <!-- BOOKING RANGE DISPLAY: Native in-picker range highlighting is inconsistent on iPhone, so this premium fallback summarizes the selected rental window. -->
         <div id="booking-range-summary" class="booking-range-summary" aria-live="polite" hidden>
           <span class="booking-range-label">Selected Rental Range</span>
@@ -582,6 +581,7 @@
               for assistance, reply STOP to opt out.
             </span>
           </label>
+          <p id="sms-consent-error" class="field-error" hidden>Please agree to the SMS consent terms before submitting.</p>
           <!-- PRIVACY POLICY / TERMS LINKS -->
           <p class="consent-disclaimer">
             By submitting this form, you also agree to our <a href="privacy-policy.html">Privacy Policy</a> and

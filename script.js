@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const bookingNote = bookingForm?.querySelector(".booking-note") || null;
   const phoneErrorEl = document.getElementById("phone-error");
   const rentalDurationErrorEl = document.getElementById("rental-duration-error");
+  const smsConsentErrorEl = document.getElementById("sms-consent-error");
+  const smsConsentLabel = document.querySelector(".consent-option");
   const bookingSuccessModal = document.getElementById("modal-booking-success");
   const bookingSuccessCloseButton = bookingSuccessModal?.querySelector('[data-modal-close="booking-success"]') || null;
   const bookingSuccessCanvas = document.getElementById("booking-success-celebration");
@@ -313,6 +315,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const digits = phoneInput.dataset.rawPhone || "";
       if (digits.length > 0 && !isPhoneValid()) {
         showFieldError(phoneErrorEl);
+      }
+    });
+  }
+
+  if (smsConsentInput) {
+    smsConsentInput.addEventListener("change", () => {
+      if (smsConsentInput.checked) {
+        hideFieldError(smsConsentErrorEl);
+        smsConsentLabel?.classList.remove("consent-invalid");
       }
     });
   }
@@ -1312,6 +1323,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (durationMs !== null && durationMs < 86400000) {
         showFieldError(rentalDurationErrorEl);
         dropoffInput?.focus();
+        return;
+      }
+
+      // SMS CONSENT VALIDATION: Require the checkbox before submitting.
+      if (!smsConsentInput?.checked) {
+        showFieldError(smsConsentErrorEl);
+        smsConsentLabel?.classList.add("consent-invalid");
+        smsConsentInput?.focus();
         return;
       }
 
