@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const bookingRangeValue = bookingRangeSummary?.querySelector("[data-booking-range-value]") || null;
   const bookingRangeMeta = bookingRangeSummary?.querySelector("[data-booking-range-meta]") || null;
   const bookingNote = bookingForm?.querySelector(".booking-note") || null;
+  const phoneErrorEl = document.getElementById("phone-error");
+  const rentalDurationErrorEl = document.getElementById("rental-duration-error");
   const bookingSuccessModal = document.getElementById("modal-booking-success");
   const bookingSuccessCloseButton = bookingSuccessModal?.querySelector('[data-modal-close="booking-success"]') || null;
   const bookingSuccessCanvas = document.getElementById("booking-success-celebration");
@@ -181,6 +183,55 @@ document.addEventListener("DOMContentLoaded", () => {
     return rawDigits;
   }
 
+  function showFieldError(el) {
+    if (el) el.hidden = false;
+  }
+
+  function hideFieldError(el) {
+    if (el) el.hidden = true;
+  }
+
+  // PHONE VALIDATION: Returns true only when the raw digit count is exactly 10.
+  function isPhoneValid() {
+    return (phoneInput?.dataset.rawPhone || "").length === 10;
+  }
+
+  // TIME PARSING: Converts "8:00 AM" / "3:00 PM" select values to total minutes since midnight.
+  function parseTimeString(value = "") {
+    const match = value.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+    if (!match) return null;
+    let [, h, m, period] = match;
+    h = Number(h);
+    m = Number(m);
+    if (period.toUpperCase() === "PM" && h !== 12) h += 12;
+    if (period.toUpperCase() === "AM" && h === 12) h = 0;
+    return h * 60 + m;
+  }
+
+  // RENTAL DURATION: Returns the rental length in milliseconds, or null if any field is missing.
+  function getRentalDurationMs() {
+    if (!pickupInput?.value || !dropoffInput?.value || !pickupTimeInput?.value || !dropoffTimeInput?.value) {
+      return null;
+    }
+    const pickupDate = parseDateInputValue(pickupInput.value);
+    const dropoffDate = parseDateInputValue(dropoffInput.value);
+    if (!pickupDate || !dropoffDate) return null;
+    const pickupMins = parseTimeString(pickupTimeInput.value);
+    const dropoffMins = parseTimeString(dropoffTimeInput.value);
+    if (pickupMins === null || dropoffMins === null) return null;
+    return (dropoffDate.getTime() + dropoffMins * 60000) - (pickupDate.getTime() + pickupMins * 60000);
+  }
+
+  // 24-HOUR VALIDATION: Show or clear the rental duration error whenever dates or times change.
+  function validateRentalDuration() {
+    const durationMs = getRentalDurationMs();
+    if (durationMs !== null && durationMs < 86400000) {
+      showFieldError(rentalDurationErrorEl);
+    } else {
+      hideFieldError(rentalDurationErrorEl);
+    }
+  }
+
   const bookingDateFormatter = new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
@@ -254,6 +305,15 @@ document.addEventListener("DOMContentLoaded", () => {
     applyPhoneFormatting(phoneInput, { preserveCursor: false });
     phoneInput.addEventListener("input", () => {
       applyPhoneFormatting(phoneInput);
+      if (isPhoneValid()) {
+        hideFieldError(phoneErrorEl);
+      }
+    });
+    phoneInput.addEventListener("blur", () => {
+      const digits = phoneInput.dataset.rawPhone || "";
+      if (digits.length > 0 && !isPhoneValid()) {
+        showFieldError(phoneErrorEl);
+      }
     });
   }
 
@@ -1240,6 +1300,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // PHONE VALIDATION: Require a complete 10-digit number before sending.
+      if (!isPhoneValid()) {
+        showFieldError(phoneErrorEl);
+        phoneInput?.focus();
+        return;
+      }
+
+      // 24-HOUR MINIMUM RENTAL VALIDATION: Block same-day or sub-24h bookings.
+      const durationMs = getRentalDurationMs();
+      if (durationMs !== null && durationMs < 86400000) {
+        showFieldError(rentalDurationErrorEl);
+        dropoffInput?.focus();
+        return;
+      }
+
       clearBookingMessageTimeout();
       submitButton.textContent = "Sending...";
       submitButton.style.background = "";
@@ -1318,11 +1393,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const handleBookingDateChange = () => {
       synchronizeBookingDates();
       updateBookingRangeSummary();
+      validateRentalDuration();
     };
 
     pickupInput.addEventListener("change", handleBookingDateChange);
     pickupInput.addEventListener("input", handleBookingDateChange);
     dropoffInput.addEventListener("change", handleBookingDateChange);
     dropoffInput.addEventListener("input", handleBookingDateChange);
+
+    pickupTimeInput?.addEventListener("change", validateRentalDuration);
+    dropoffTimeInput?.addEventListener("change", validateRentalDuration);
   }
 });
