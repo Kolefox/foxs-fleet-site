@@ -1391,6 +1391,10 @@ document.addEventListener("DOMContentLoaded", () => {
           resetForm: true,
           duration: 4000,
         });
+        // META PIXEL: Fire Lead event only after the webhook confirms a successful submission.
+        if (typeof fbq === "function") {
+          fbq("track", "Lead");
+        }
         // SUCCESSFUL SUBMISSION POPUP LOGIC: Open the luxury success modal and launch the celebration only after the webhook confirms success.
         openBookingSuccessModal();
         playBookingSuccessCelebration();
