@@ -1395,6 +1395,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (typeof fbq === "function") {
           fbq("track", "Lead");
         }
+        // GA4: Fire generate_lead conversion only after the webhook confirms a successful submission.
+        if (typeof gtag === "function") {
+          gtag("event", "generate_lead");
+        }
         // SUCCESSFUL SUBMISSION POPUP LOGIC: Open the luxury success modal and launch the celebration only after the webhook confirms success.
         openBookingSuccessModal();
         playBookingSuccessCelebration();
