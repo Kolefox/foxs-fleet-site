@@ -20,6 +20,50 @@ document.addEventListener("DOMContentLoaded", () => {
   const bookingSuccessCloseButton = bookingSuccessModal?.querySelector('[data-modal-close="booking-success"]') || null;
   const bookingSuccessCanvas = document.getElementById("booking-success-celebration");
   const bookingSuccessCanvasContext = bookingSuccessCanvas?.getContext("2d") || null;
+  const escaladeGalleryImages = [
+    "assets/images/escalade-1.jpg",
+    "assets/images/escalade-2.jpg",
+    "assets/images/escalade-3.jpg",
+    "assets/images/escalade-4.jpg",
+    "assets/images/escalade-5.jpg",
+    "assets/images/escalade-6.jpg",
+    "assets/images/escalade-7.jpg",
+    "assets/images/escalade-8.jpg",
+    "assets/images/escalade-9.jpg",
+    "assets/images/escalade-10.jpg",
+    "assets/images/escalade-11.jpg",
+    "assets/images/escalade-12.jpg",
+  ];
+  const teslaGalleryImages = [
+    "assets/images/Tesla-1.jpg",
+    "assets/images/Tesla-2.jpg",
+    "assets/images/Tesla-3.jpg",
+    "assets/images/Tesla-4.jpg",
+    "assets/images/Tesla-5.jpg",
+    "assets/images/Tesla-6.jpg",
+    "assets/images/Tesla-7.jpg",
+    "assets/images/Tesla-8.jpg",
+    "assets/images/Tesla-9.jpg",
+    "assets/images/Tesla-10.jpg",
+    "assets/images/Tesla-11.jpg",
+    "assets/images/Tesla-12.jpg",
+  ];
+  const sharedGalleryConfigurations = {
+    escalade: {
+      images: escaladeGalleryImages,
+      cardImageAltPrefix: "2023 Cadillac Escalade Premium Luxury Platinum photo",
+      modalImageAltPrefix: "2023 Cadillac Escalade detail photo",
+      cardDotAltPrefix: "View Escalade photo",
+      modalDotAltPrefix: "View Escalade detail photo",
+    },
+    tesla: {
+      images: teslaGalleryImages,
+      cardImageAltPrefix: "2023 Tesla Model 3 photo",
+      modalImageAltPrefix: "2023 Tesla Model 3 detail photo",
+      cardDotAltPrefix: "View Tesla photo",
+      modalDotAltPrefix: "View Tesla detail photo",
+    },
+  };
   let bookingSuccessParticles = [];
   let bookingSuccessAnimationFrame = 0;
   let bookingSuccessTimers = [];
@@ -489,6 +533,59 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // SHARED SLIDESHOW LOGIC: Handles auto-rotation, arrow controls, and dot controls for the Escalade and Tesla galleries.
+  function initializeSharedSlideshows() {
+    const sharedSlideshows = document.querySelectorAll("[data-shared-gallery]");
+
+    sharedSlideshows.forEach((slideshow) => {
+      const galleryKey = slideshow.dataset.sharedGallery || "";
+      const galleryConfig = sharedGalleryConfigurations[galleryKey];
+
+      if (!galleryConfig) {
+        return;
+      }
+
+      const controls = slideshow.querySelector(".slideshow-controls");
+      const dotsContainer = slideshow.querySelector(".slideshow-dots");
+      const galleryType = slideshow.dataset[`${galleryKey}Gallery`] === "modal" ? "modal" : "card";
+      const imageAltPrefix = galleryType === "modal" ? galleryConfig.modalImageAltPrefix : galleryConfig.cardImageAltPrefix;
+      const dotAltPrefix = galleryType === "modal" ? galleryConfig.modalDotAltPrefix : galleryConfig.cardDotAltPrefix;
+      const slideClassName = galleryType === "modal" ? "slideshow-image modal-img" : "slideshow-image";
+      const slideInsertionTarget = controls || dotsContainer || null;
+      const slideMarkup = document.createDocumentFragment();
+      const dotMarkup = document.createDocumentFragment();
+
+      slideshow.querySelectorAll(".slideshow-image").forEach((slide) => slide.remove());
+      dotsContainer?.replaceChildren();
+
+      galleryConfig.images.forEach((imagePath, index) => {
+        const image = document.createElement("img");
+        const dot = document.createElement("button");
+        const isFirstImage = index === 0;
+
+        image.src = imagePath;
+        image.alt = `${imageAltPrefix} ${index + 1}`;
+        image.className = isFirstImage ? `${slideClassName} is-active` : slideClassName;
+        image.loading = isFirstImage ? "eager" : "lazy";
+
+        if (galleryType === "card" && isFirstImage) {
+          image.fetchPriority = "high";
+        }
+
+        dot.type = "button";
+        dot.className = isFirstImage ? "slideshow-dot is-active" : "slideshow-dot";
+        dot.dataset.slideshowDot = String(index);
+        dot.setAttribute("aria-label", `${dotAltPrefix} ${index + 1}`);
+        dot.setAttribute("aria-pressed", String(isFirstImage));
+
+        slideMarkup.append(image);
+        dotMarkup.append(dot);
+      });
+
+      slideshow.insertBefore(slideMarkup, slideInsertionTarget);
+      dotsContainer?.append(dotMarkup);
+    });
+  }
+
   function initializeSlideshows() {
     const slideshows = document.querySelectorAll("[data-slideshow]");
 
@@ -1027,6 +1124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fadeInElements.forEach((element) => element.classList.add("visible"));
   }
 
+  initializeSharedSlideshows();
   initializeSlideshows();
   initializeTestimonialCarousels(testimonialCarouselSettings);
 

@@ -104,34 +104,15 @@
     <div class="fleet-grid">
       <div class="vehicle-card fade-in">
         <div class="vehicle-img-wrap">
-          <!-- ESCALADE SLIDESHOW: Edit the 4 rotating Escalade images here if filenames ever change. -->
-          <div class="image-slideshow escalade-slideshow" data-slideshow="escalade" data-interval="2800" aria-label="2023 Cadillac Escalade photo slideshow">
-            <img
-              src="assets/images/escalade-1.jpg"
-              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 1"
-              class="slideshow-image is-active"
-              loading="eager"
-              fetchpriority="high"
-            />
-            <img
-              src="assets/images/escalade-2.jpg"
-              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 2"
-              class="slideshow-image"
-              loading="lazy"
-            />
-            <img
-              src="assets/images/escalade-3.jpg"
-              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 3"
-              class="slideshow-image"
-              loading="lazy"
-            />
-            <img
-              src="assets/images/escalade-4.jpg"
-              alt="2023 Cadillac Escalade Premium Luxury Platinum photo 4"
-              class="slideshow-image"
-              loading="lazy"
-            />
-
+          <!-- ESCALADE SLIDESHOW: Shared Escalade images are injected from script.js so the card and modal stay perfectly matched. -->
+          <div
+            class="image-slideshow escalade-slideshow"
+            data-slideshow="escalade"
+            data-shared-gallery="escalade"
+            data-escalade-gallery="card"
+            data-interval="2800"
+            aria-label="2023 Cadillac Escalade photo slideshow"
+          >
             <!-- ESCALADE SLIDESHOW ARROWS: Previous/next controls for the main card. -->
             <div class="slideshow-controls" aria-hidden="false">
               <button
@@ -156,13 +137,8 @@
               </button>
             </div>
 
-            <!-- ESCALADE SLIDESHOW DOTS: Direct navigation for the 4 Escalade photos. -->
-            <div class="slideshow-dots" aria-label="Escalade card photo navigation">
-              <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Escalade photo 1" aria-pressed="true"></button>
-              <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Escalade photo 2" aria-pressed="false"></button>
-              <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Escalade photo 3" aria-pressed="false"></button>
-              <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Escalade photo 4" aria-pressed="false"></button>
-            </div>
+            <!-- ESCALADE SLIDESHOW DOTS: Direct navigation is generated from the shared Escalade gallery source. -->
+            <div class="slideshow-dots" aria-label="Escalade card photo navigation"></div>
           </div>
           <div class="vehicle-price-badge">
             <span class="from">From</span>
@@ -190,33 +166,15 @@
 
       <div class="vehicle-card fade-in">
         <div class="vehicle-img-wrap">
-          <!-- TESLA SLIDESHOW CONTAINER: Edit the 4 rotating Tesla images here if filenames ever change. -->
-          <div class="image-slideshow tesla-slideshow" data-slideshow="tesla" data-interval="2800" aria-label="2023 Tesla Model 3 photo slideshow">
-            <img
-              src="assets/images/Tesla-1.jpg"
-              alt="2023 Tesla Model 3 photo 1"
-              class="slideshow-image is-active"
-              loading="lazy"
-            />
-            <img
-              src="assets/images/Tesla-2.jpg"
-              alt="2023 Tesla Model 3 photo 2"
-              class="slideshow-image"
-              loading="lazy"
-            />
-            <img
-              src="assets/images/Tesla-3.jpg"
-              alt="2023 Tesla Model 3 photo 3"
-              class="slideshow-image"
-              loading="lazy"
-            />
-            <img
-              src="assets/images/Tesla-4.jpg"
-              alt="2023 Tesla Model 3 photo 4"
-              class="slideshow-image"
-              loading="lazy"
-            />
-
+          <!-- TESLA SLIDESHOW: Shared Tesla images are injected from script.js so the card and modal stay perfectly matched. -->
+          <div
+            class="image-slideshow tesla-slideshow"
+            data-slideshow="tesla"
+            data-shared-gallery="tesla"
+            data-tesla-gallery="card"
+            data-interval="2800"
+            aria-label="2023 Tesla Model 3 photo slideshow"
+          >
             <!-- TESLA ARROW CONTROLS: Previous/next controls for the main Tesla card. -->
             <div class="slideshow-controls" aria-hidden="false">
               <button
@@ -241,13 +199,8 @@
               </button>
             </div>
 
-            <!-- TESLA DOT CONTROLS: Direct navigation for the 4 Tesla photos. -->
-            <div class="slideshow-dots" aria-label="Tesla card photo navigation">
-              <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Tesla photo 1" aria-pressed="true"></button>
-              <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Tesla photo 2" aria-pressed="false"></button>
-              <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Tesla photo 3" aria-pressed="false"></button>
-              <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Tesla photo 4" aria-pressed="false"></button>
-            </div>
+            <!-- TESLA SLIDESHOW DOTS: Direct navigation is generated from the shared Tesla gallery source. -->
+            <div class="slideshow-dots" aria-label="Tesla card photo navigation"></div>
           </div>
           <div class="vehicle-price-badge">
             <span class="from">From</span>
@@ -669,33 +622,15 @@
   <div class="modal-backdrop" id="modal-escalade" data-modal-id="escalade">
     <div class="modal">
       <div class="modal-img-wrap">
-        <!-- ESCALADE SLIDESHOW: This modal reuses the same 4-photo Escalade rotation. -->
-        <div class="image-slideshow escalade-slideshow modal-slideshow" data-slideshow="escalade" data-interval="2800" aria-label="2023 Cadillac Escalade detail photo slideshow">
-          <img
-            src="assets/images/escalade-1.jpg"
-            alt="2023 Cadillac Escalade detail photo 1"
-            class="slideshow-image modal-img is-active"
-            loading="eager"
-          />
-          <img
-            src="assets/images/escalade-2.jpg"
-            alt="2023 Cadillac Escalade detail photo 2"
-            class="slideshow-image modal-img"
-            loading="lazy"
-          />
-          <img
-            src="assets/images/escalade-3.jpg"
-            alt="2023 Cadillac Escalade detail photo 3"
-            class="slideshow-image modal-img"
-            loading="lazy"
-          />
-          <img
-            src="assets/images/escalade-4.jpg"
-            alt="2023 Cadillac Escalade detail photo 4"
-            class="slideshow-image modal-img"
-            loading="lazy"
-          />
-
+        <!-- ESCALADE SLIDESHOW: Shared Escalade images are injected from script.js so the card and modal stay perfectly matched. -->
+        <div
+          class="image-slideshow escalade-slideshow modal-slideshow"
+          data-slideshow="escalade"
+          data-shared-gallery="escalade"
+          data-escalade-gallery="modal"
+          data-interval="2800"
+          aria-label="2023 Cadillac Escalade detail photo slideshow"
+        >
           <!-- ESCALADE SLIDESHOW ARROWS: Previous/next controls for the Escalade modal. -->
           <div class="slideshow-controls" aria-hidden="false">
             <button
@@ -720,13 +655,8 @@
             </button>
           </div>
 
-          <!-- ESCALADE SLIDESHOW DOTS: Direct navigation for the 4 modal photos. -->
-          <div class="slideshow-dots" aria-label="Escalade modal photo navigation">
-            <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Escalade detail photo 1" aria-pressed="true"></button>
-            <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Escalade detail photo 2" aria-pressed="false"></button>
-            <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Escalade detail photo 3" aria-pressed="false"></button>
-            <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Escalade detail photo 4" aria-pressed="false"></button>
-          </div>
+          <!-- ESCALADE SLIDESHOW DOTS: Direct navigation is generated from the shared Escalade gallery source. -->
+          <div class="slideshow-dots" aria-label="Escalade modal photo navigation"></div>
         </div>
         <button class="modal-close" type="button" aria-label="Close Escalade details" data-modal-close="escalade">&#10005;</button>
       </div>
@@ -783,33 +713,15 @@
   <div class="modal-backdrop" id="modal-tesla" data-modal-id="tesla">
     <div class="modal">
       <div class="modal-img-wrap">
-        <!-- TESLA SLIDESHOW CONTAINER: This modal reuses the same 4-photo Tesla rotation. -->
-        <div class="image-slideshow tesla-slideshow modal-slideshow" data-slideshow="tesla" data-interval="2800" aria-label="2023 Tesla Model 3 detail photo slideshow">
-          <img
-            src="assets/images/Tesla-1.jpg"
-            alt="2023 Tesla Model 3 detail photo 1"
-            class="slideshow-image modal-img is-active"
-            loading="lazy"
-          />
-          <img
-            src="assets/images/Tesla-2.jpg"
-            alt="2023 Tesla Model 3 detail photo 2"
-            class="slideshow-image modal-img"
-            loading="lazy"
-          />
-          <img
-            src="assets/images/Tesla-3.jpg"
-            alt="2023 Tesla Model 3 detail photo 3"
-            class="slideshow-image modal-img"
-            loading="lazy"
-          />
-          <img
-            src="assets/images/Tesla-4.jpg"
-            alt="2023 Tesla Model 3 detail photo 4"
-            class="slideshow-image modal-img"
-            loading="lazy"
-          />
-
+        <!-- TESLA SLIDESHOW: Shared Tesla images are injected from script.js so the card and modal stay perfectly matched. -->
+        <div
+          class="image-slideshow tesla-slideshow modal-slideshow"
+          data-slideshow="tesla"
+          data-shared-gallery="tesla"
+          data-tesla-gallery="modal"
+          data-interval="2800"
+          aria-label="2023 Tesla Model 3 detail photo slideshow"
+        >
           <!-- TESLA ARROW CONTROLS: Previous/next controls for the Tesla modal. -->
           <div class="slideshow-controls" aria-hidden="false">
             <button
@@ -834,13 +746,8 @@
             </button>
           </div>
 
-          <!-- TESLA DOT CONTROLS: Direct navigation for the 4 Tesla modal photos. -->
-          <div class="slideshow-dots" aria-label="Tesla modal photo navigation">
-            <button type="button" class="slideshow-dot is-active" data-slideshow-dot="0" aria-label="View Tesla detail photo 1" aria-pressed="true"></button>
-            <button type="button" class="slideshow-dot" data-slideshow-dot="1" aria-label="View Tesla detail photo 2" aria-pressed="false"></button>
-            <button type="button" class="slideshow-dot" data-slideshow-dot="2" aria-label="View Tesla detail photo 3" aria-pressed="false"></button>
-            <button type="button" class="slideshow-dot" data-slideshow-dot="3" aria-label="View Tesla detail photo 4" aria-pressed="false"></button>
-          </div>
+          <!-- TESLA SLIDESHOW DOTS: Direct navigation is generated from the shared Tesla gallery source. -->
+          <div class="slideshow-dots" aria-label="Tesla modal photo navigation"></div>
         </div>
         <button class="modal-close" type="button" aria-label="Close Tesla details" data-modal-close="tesla">&#10005;</button>
       </div>
