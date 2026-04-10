@@ -259,6 +259,9 @@
  .hero-buttons .btn-primary,
  .hero-buttons .btn-outline{width:auto;padding:18px 44px;}
 }
+ @media (min-width:992px){
+ .hero-buttons{justify-content:center;gap:20px;}
+}
  #why{
  background:var(--charcoal);
  position:relative;
