@@ -40,6 +40,47 @@
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
+  <!-- NAVBAR -->
+  <nav class="site-nav" id="site-nav" role="navigation" aria-label="Main navigation">
+    <a href="#hero" class="nav-logo" aria-label="Fox's Fleet home">
+      <img src="assets/images/foxs-fleet-logo.svg" alt="Fox's Fleet" class="nav-logo-img" />
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="#why" class="nav-link">Why&nbsp;Us</a></li>
+      <li><a href="#fleet" class="nav-link">Our&nbsp;Fleet</a></li>
+      <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+    </ul>
+
+    <a href="#booking" class="btn-primary nav-cta">Reserve</a>
+
+    <button
+      class="nav-hamburger"
+      id="nav-hamburger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="nav-drawer"
+      aria-label="Open navigation menu"
+    >
+      <span class="nav-hamburger-bar"></span>
+      <span class="nav-hamburger-bar"></span>
+      <span class="nav-hamburger-bar"></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div class="nav-drawer" id="nav-drawer" aria-hidden="true">
+    <div class="nav-drawer-inner">
+      <ul class="nav-drawer-links" role="list">
+        <li><a href="#why" class="nav-drawer-link" tabindex="-1">Why&nbsp;Us</a></li>
+        <li><a href="#fleet" class="nav-drawer-link" tabindex="-1">Our&nbsp;Fleet</a></li>
+        <li><a href="#testimonials" class="nav-drawer-link" tabindex="-1">Testimonials</a></li>
+        <li><a href="#booking" class="nav-drawer-link nav-drawer-cta" tabindex="-1">Reserve</a></li>
+      </ul>
+      <p class="nav-drawer-tagline">South Florida Luxury Rentals</p>
+    </div>
+  </div>
+
   <section id="hero">
     <div class="hero-bg"></div>
     <div class="hero-overlay"></div>

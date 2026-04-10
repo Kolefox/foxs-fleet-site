@@ -1431,4 +1431,47 @@ document.addEventListener("DOMContentLoaded", () => {
     pickupTimeInput?.addEventListener("change", validateRentalDuration);
     dropoffTimeInput?.addEventListener("change", validateRentalDuration);
   }
+
+  // NAVBAR: Scroll-aware glass effect + mobile drawer.
+  const siteNav = document.getElementById("site-nav");
+  const navHamburger = document.getElementById("nav-hamburger");
+  const navDrawer = document.getElementById("nav-drawer");
+  const navDrawerLinks = navDrawer ? Array.from(navDrawer.querySelectorAll(".nav-drawer-link")) : [];
+
+  if (siteNav) {
+    const onNavScroll = () => siteNav.classList.toggle("scrolled", window.scrollY > 60);
+    window.addEventListener("scroll", onNavScroll, { passive: true });
+    onNavScroll();
+  }
+
+  function openNavDrawer() {
+    navHamburger?.classList.add("is-open");
+    navHamburger?.setAttribute("aria-expanded", "true");
+    navDrawer?.classList.add("is-open");
+    navDrawer?.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    navDrawerLinks.forEach((link) => link.setAttribute("tabindex", "0"));
+  }
+
+  function closeNavDrawer() {
+    navHamburger?.classList.remove("is-open");
+    navHamburger?.setAttribute("aria-expanded", "false");
+    navDrawer?.classList.remove("is-open");
+    navDrawer?.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    navDrawerLinks.forEach((link) => link.setAttribute("tabindex", "-1"));
+  }
+
+  navHamburger?.addEventListener("click", () => {
+    navDrawer?.classList.contains("is-open") ? closeNavDrawer() : openNavDrawer();
+  });
+
+  navDrawerLinks.forEach((link) => link.addEventListener("click", closeNavDrawer));
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navDrawer?.classList.contains("is-open")) {
+      closeNavDrawer();
+      navHamburger?.focus();
+    }
+  });
 });
